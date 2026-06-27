@@ -40,3 +40,12 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --project-path /path/to/project \
   --project-type firmware
 ```
+
+For machine-learning, data-science, or AI projects:
+
+```bash
+python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+  --project-name ExampleML \
+  --project-path /path/to/project \
+  --project-type ml
+```

@@ -42,6 +42,12 @@ Use these as recommended or candidate skills in Agent profiles. Do not install t
 - Installed/local: `systematic-debugging`, `verification-before-completion`, `test-driven-development`, `using-git-worktrees`.
 - Candidate: embedded systems skills, firmware review skills, RTOS/FreeRTOS/Zephyr/Yocto skills.
 
+## ML Agent
+
+- Installed/local: `systematic-debugging`, `verification-before-completion`, `test-driven-development`, `market-research`, `openai-docs`, `using-git-worktrees`.
+- Candidate: data science workflow skills, dataset profiling, notebook review, model evaluation, experiment tracking, MLOps release, vector search/RAG evaluation, and model monitoring skills.
+- Evidence focus: dataset version, train/validation/test split, random seed, baseline metric, target metric, evaluation command, artifact path, confusion matrix or error slices, inference latency, resource usage, and data leakage checks.
+
 ## Third-Party Install Review Template
 
 ```text
@@ -63,4 +69,3 @@ Permissions / supply-chain risks:
 Recommendation:
 <install / do not install / install only after pinning>
 ```
-

@@ -76,6 +76,15 @@ Default language:
 - Usually uses `mode: goal`.
 - Recommended skills: `systematic-debugging`, `verification-before-completion`, `test-driven-development`, `using-git-worktrees`.
 
+## ML Agent / Machine Learning Agent
+
+- Include by default for ML, machine-learning, data-science, or AI projects.
+- Covers model selection, feature design, training strategy, evaluation interpretation, baseline comparison, data leakage risk, experiment reproducibility, model/data version concerns, and inference trade-offs.
+- Uses an independent worktree by default only after worktree preflight confirms the project has a valid HEAD/ref.
+- Usually uses `mode: goal` for model/feature/training work and `mode: review` for metric, leakage, or reproducibility review.
+- Recommended skills: `systematic-debugging`, `verification-before-completion`, `test-driven-development`, `market-research`, `openai-docs`, `using-git-worktrees`.
+- Candidate skills: data science, ML experiment tracking, notebook review, model evaluation, dataset profiling, and MLOps/release skills.
+
 ## Third-Party Skills
 
 Third-party skills are candidates until Dylan confirms installation. PM must present repo, tag/commit SHA, `SKILL.md` summary, scripts list, and permission/supply-chain risk summary.

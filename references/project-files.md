@@ -15,12 +15,14 @@ team-loop/
     research.md
     ux.md
     fw.md
+    ml.md
   knowledge/
     architecture.md
     build-and-test.md
     release.md
     design-system.md
     hardware.md
+    ml.md
   agents.json
   messages.ndjson
   commits.ndjson

@@ -8,8 +8,8 @@ Every cross-Agent dispatch must use this searchable envelope:
 TEAMLOOP_MESSAGE v1
 project: <project-name>
 mode: <task|goal|review>
-from_role: <pm|dev|test|version|review|research|ux|fw>
-to_role: <pm|dev|test|version|review|research|ux|fw>
+from_role: <pm|dev|test|version|review|research|ux|fw|ml>
+to_role: <pm|dev|test|version|review|research|ux|fw|ml>
 message_id: <timestamp-role-counter>
 requires_response: <yes|no>
 response_to: <message_id or none>
@@ -53,6 +53,8 @@ Default route choices:
 - Research open-ended investigation: `goal`
 - UX product flow work: `goal`
 - FW hardware/firmware diagnosis: `goal`
+- ML model selection, feature work, training strategy, or evaluation interpretation: `goal`
+- ML metric, leakage, or reproducibility review: `review`
 
 ## Auto-Loop
 
@@ -113,4 +115,3 @@ PM can automatically message Agents and read results. Dylan must confirm:
 - formal releases.
 
 Version Agent may create branches, commit, and update changelog/version files after PM approval. It must not delete or merge branches without Dylan confirmation.
-

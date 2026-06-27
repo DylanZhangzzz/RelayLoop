@@ -1,6 +1,6 @@
 ---
 name: dylan-team-loop
-description: PM-led multi-agent project orchestration for Codex. Use when Dylan wants a Team Loop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, and FW agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs, message logs, commit logs, decision logs, or controlled installation of third-party skills.
+description: PM-led multi-agent project orchestration for Codex. Use when Dylan wants a Team Loop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, FW, and ML agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs, message logs, commit logs, decision logs, or controlled installation of third-party skills.
 ---
 
 # Dylan Team Loop
@@ -27,7 +27,8 @@ Load only what is needed:
    - worktree policy;
    - language policy;
    - third-party skill policy;
-   - whether FW Agent is included for firmware/embedded/hardware work.
+   - whether FW Agent is included for firmware/embedded/hardware work;
+   - whether ML Agent is included for machine-learning, data-science, or AI work.
 3. Wait for Dylan approval.
 4. Run `scripts/init_team_loop.py` to create the project-local `team-loop/` workspace.
 5. Use `codex_app.list_projects` before creating project-scoped Agent threads.
@@ -49,6 +50,7 @@ Default workspace policy:
 - Review Agent: read-only unless PM explicitly grants a worktree for a small fix.
 - Version Agent: read-only unless PM approves branch/commit/changelog changes.
 - Research, UX, FW: read-only unless the task needs file edits or experiments.
+- ML Agent: independent worktree by default for ML projects after worktree preflight confirms a valid HEAD/ref.
 
 ## PM Operating Loop
 

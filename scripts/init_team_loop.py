@@ -11,11 +11,13 @@ from pathlib import Path
 from textwrap import dedent
 
 
-ROLES = ("pm", "dev", "test", "version", "review", "research", "ux", "fw")
+ROLES = ("pm", "dev", "test", "version", "review", "research", "ux", "fw", "ml")
 
 DEFAULT_ROLES = ("pm", "dev", "test", "version", "review", "research", "ux")
 
 FIRMWARE_TYPES = {"firmware", "embedded", "hardware", "fw"}
+
+ML_TYPES = {"ml", "machine-learning", "machine_learning", "data-science", "datascience", "ai"}
 
 ROLE_NAMES = {
     "pm": "PM Agent",
@@ -26,6 +28,7 @@ ROLE_NAMES = {
     "research": "Research Agent",
     "ux": "UX Agent",
     "fw": "FW Agent",
+    "ml": "ML Agent",
 }
 
 WORKSPACE_MODES = {
@@ -37,6 +40,7 @@ WORKSPACE_MODES = {
     "research": "readonly",
     "ux": "readonly",
     "fw": "readonly",
+    "ml": "worktree",
 }
 
 RESPONSIBILITIES = {
@@ -48,6 +52,7 @@ RESPONSIBILITIES = {
     "research": ["technical-research", "dependency-research", "docs-lookup"],
     "ux": ["product-flow", "ui-behavior", "accessibility", "visual-quality"],
     "fw": ["firmware", "hardware-interface", "rtos", "device-logs"],
+    "ml": ["model-selection", "features", "training-strategy", "evaluation-interpretation"],
 }
 
 RECOMMENDED_SKILLS = {
@@ -106,6 +111,14 @@ RECOMMENDED_SKILLS = {
         "test-driven-development",
         "using-git-worktrees",
     ],
+    "ml": [
+        "systematic-debugging",
+        "verification-before-completion",
+        "test-driven-development",
+        "market-research",
+        "openai-docs",
+        "using-git-worktrees",
+    ],
 }
 
 KNOWLEDGE_REFS = {
@@ -141,6 +154,11 @@ KNOWLEDGE_REFS = {
         "team-loop/knowledge/hardware.md",
         "team-loop/knowledge/build-and-test.md",
     ],
+    "ml": [
+        "team-loop/knowledge/ml.md",
+        "team-loop/knowledge/build-and-test.md",
+        "team-loop/knowledge/architecture.md",
+    ],
 }
 
 
@@ -148,13 +166,15 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def parse_roles(raw: str | None, project_type: str, include_fw: bool) -> list[str]:
+def parse_roles(raw: str | None, project_type: str, include_fw: bool, include_ml: bool) -> list[str]:
     if raw:
         roles = [item.strip().lower() for item in raw.split(",") if item.strip()]
     else:
         roles = list(DEFAULT_ROLES)
         if include_fw or project_type.lower() in FIRMWARE_TYPES:
             roles.append("fw")
+        if include_ml or project_type.lower() in ML_TYPES:
+            roles.append("ml")
 
     unknown = sorted(set(roles) - set(ROLES))
     if unknown:
@@ -354,6 +374,7 @@ def main() -> int:
     parser.add_argument("--project-type", default="software")
     parser.add_argument("--roles", help="Comma-separated roles. Defaults to PM,Dev,Test,Version,Review,Research,UX.")
     parser.add_argument("--include-fw", action="store_true", help="Include FW Agent.")
+    parser.add_argument("--include-ml", action="store_true", help="Include ML Agent.")
     parser.add_argument("--create-project-dir", action="store_true", help="Create project path if it does not exist.")
     parser.add_argument("--force", action="store_true", help="Overwrite generated files.")
     args = parser.parse_args()
@@ -370,7 +391,7 @@ def main() -> int:
         print(f"Project path is not a directory: {project_path}", file=sys.stderr)
         return 2
 
-    roles = parse_roles(args.roles, args.project_type, args.include_fw)
+    roles = parse_roles(args.roles, args.project_type, args.include_fw, args.include_ml)
     created_at = utc_now()
     team_dir = project_path / "team-loop"
 
@@ -386,6 +407,7 @@ def main() -> int:
         "release.md": "Release",
         "design-system.md": "Design System",
         "hardware.md": "Hardware",
+        "ml.md": "Machine Learning",
     }
     for filename, title in knowledge.items():
         write_text(team_dir / "knowledge" / filename, knowledge_file(title), args.force)
@@ -404,4 +426,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
