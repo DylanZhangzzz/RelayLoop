@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dylan Team Loop"
+  short_description: "Coordinate PM-led multi-agent project loops"
+  default_prompt: "Use $dylan-team-loop to initialize a PM-led multi-agent project loop."
