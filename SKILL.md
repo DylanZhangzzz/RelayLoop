@@ -31,10 +31,16 @@ Load only what is needed:
 3. Wait for Dylan approval.
 4. Run `scripts/init_team_loop.py` to create the project-local `team-loop/` workspace.
 5. Use `codex_app.list_projects` before creating project-scoped Agent threads.
-6. Use `codex_app.create_thread` only after Dylan has approved initial Agent creation or a later new role.
-7. Write all returned thread IDs to `team-loop/agents.json`.
-8. Use `codex_app.set_thread_title` to name each thread with the project and role.
-9. Use `codex_app.set_thread_pinned` for the PM thread and active delivery threads when useful.
+6. Before creating any worktree-backed Agent, run `scripts/check_worktree_ready.py --project-path <project>`.
+7. Use `codex_app.create_thread` only after Dylan has approved initial Agent creation or a later new role.
+   - If worktree preflight reports `readyForWorktree: false`, do not request a worktree-backed Agent yet. Either ask Dylan to create an initial commit or create that Agent in the local project environment until a valid HEAD exists.
+   - If preflight reports a valid `branch`, use that branch only when it exists. Do not assume `main`.
+8. Write all returned thread IDs to `team-loop/agents.json`.
+9. Use `codex_app.set_thread_title` with the Team Loop title convention:
+   - PM thread: `<project> - PM Agent`, because it may be pinned outside the project group.
+   - Other project-scoped Agent threads: `<Role> Agent`, for example `Dev Agent`, `Test Agent`, `Review Agent`. Do not prefix them with the project name when they already appear under that project in the Codex sidebar.
+   - Projectless or cross-project threads: `<project> - <Role> Agent`.
+10. Use `codex_app.set_thread_pinned` for the PM thread and active delivery threads when useful.
 
 Default workspace policy:
 
@@ -92,6 +98,13 @@ Version Agent may create a new branch, commit, or update changelog/version files
 ```bash
 python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --project-name ExampleProject \
+  --project-path /path/to/project
+```
+
+- Check whether a project can create worktree-backed Agents:
+
+```bash
+python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py \
   --project-path /path/to/project
 ```
 

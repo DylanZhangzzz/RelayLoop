@@ -27,14 +27,14 @@ Default language:
 ## Dev Agent
 
 - Implements features, bug fixes, and scoped code changes.
-- Uses an independent worktree by default.
+- Uses an independent worktree by default only after worktree preflight confirms the project has a valid HEAD/ref. For an unborn branch or empty repository, PM must create Dev in the local environment or ask Dylan to create an initial commit first.
 - Uses `mode: goal` for complex bugs and `mode: task` for explicit small changes.
 - Recommended skills: `test-driven-development`, `systematic-debugging`, `using-git-worktrees`, `executing-plans`, `verification-before-completion`.
 
 ## Test Agent
 
 - Designs tests, runs verification, reproduces bugs, and validates acceptance criteria.
-- Uses an independent worktree by default.
+- Uses an independent worktree by default only after worktree preflight confirms the project has a valid HEAD/ref. For an unborn branch or empty repository, PM must create Test in the local environment or ask Dylan to create an initial commit first.
 - Uses `mode: task` for one command or repro step and `mode: goal` for full regression strategy.
 - Recommended skills: `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `browser:control-in-app-browser`, `playwright-interactive`.
 
@@ -79,4 +79,3 @@ Default language:
 ## Third-Party Skills
 
 Third-party skills are candidates until Dylan confirms installation. PM must present repo, tag/commit SHA, `SKILL.md` summary, scripts list, and permission/supply-chain risk summary.
-

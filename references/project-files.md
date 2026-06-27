@@ -73,6 +73,25 @@ Canonical registry for role threads:
 
 When `codex_app.create_thread` returns a thread id, update the matching Agent entry.
 
+## Worktree Preflight
+
+Run this before creating any worktree-backed Agent:
+
+```bash
+python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py --project-path /path/to/project
+```
+
+If `readyForWorktree` is false, do not call `codex_app.create_thread` with a worktree environment for Dev/Test. Common reasons:
+
+- repository has no commits yet;
+- `main` is an unborn branch and not a valid ref;
+- the directory is not a git repository.
+
+Fallbacks:
+
+- ask Dylan to create an initial commit, then retry worktree creation;
+- create the Agent in the local project environment until a valid HEAD exists.
+
 ## NDJSON Logs
 
 Each line is one JSON object with at least:
@@ -108,4 +127,3 @@ Keep this human-readable and current:
 ## protocol.md
 
 Copy the project-local protocol from `references/protocol.md` or the initializer's embedded template. Keep it in sync when the project customizes language or permissions.
-

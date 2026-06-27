@@ -21,6 +21,17 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --project-path /path/to/project
 ```
 
+## Check Worktree Readiness
+
+Before creating worktree-backed Dev/Test Agents, verify the project has a valid git `HEAD`:
+
+```bash
+python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py \
+  --project-path /path/to/project
+```
+
+If `readyForWorktree` is false, create an initial commit first or create Agents in the local project environment until a valid `HEAD` exists.
+
 For firmware, embedded, or hardware projects:
 
 ```bash
@@ -29,4 +40,3 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --project-path /path/to/project \
   --project-type firmware
 ```
-
