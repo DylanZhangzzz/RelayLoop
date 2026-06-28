@@ -4,7 +4,7 @@ Use these as recommended or candidate skills in Agent profiles. Do not install t
 
 ## PM Agent
 
-- Installed/local: `dylan-team-loop`, `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `verification-before-completion`, `using-git-worktrees`.
+- Installed/local: `relayloop`, `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `verification-before-completion`, `using-git-worktrees`.
 - Candidate: `issue-triage`, `linear`, `notion-spec-to-implementation`, GitHub issue-driven workflows.
 
 ## Dev Agent

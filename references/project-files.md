@@ -31,7 +31,7 @@ team-loop/
   protocol.md
 ```
 
-Compatibility note: RelayLoop currently writes project-local state under `team-loop/` and keeps `dylan-team-loop.*` schemas for backward compatibility.
+RelayLoop writes project-local state under `team-loop/` and uses `relayloop.*` schemas.
 
 With `--include-project-harness`, the initializer also creates native RelayLoop Project Harness files outside `team-loop/`:
 
@@ -55,7 +55,7 @@ Canonical registry for role threads:
 
 ```json
 {
-  "schema": "dylan-team-loop.agents.v1",
+  "schema": "relayloop.agents.v1",
   "project": {
     "name": "ExampleProject",
     "projectPath": "/path/to/project",
@@ -98,7 +98,7 @@ When `codex_app.create_thread` returns a thread id, update the matching Agent en
 Run this before creating any worktree-backed Agent:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py --project-path /path/to/project
+python3 ~/.codex/skills/relayloop/scripts/check_worktree_ready.py --project-path /path/to/project
 ```
 
 If `readyForWorktree` is false, do not call `codex_app.create_thread` with a worktree environment for Dev/Test. Common reasons:
@@ -118,7 +118,7 @@ Each line is one JSON object with at least:
 
 ```json
 {
-  "schema": "dylan-team-loop.event.v1",
+  "schema": "relayloop.event.v1",
   "eventType": "message",
   "timestamp": "2026-06-27T00:00:00Z",
   "actor": "pm",

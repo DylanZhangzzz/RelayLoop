@@ -59,7 +59,7 @@ RESPONSIBILITIES = {
 
 RECOMMENDED_SKILLS = {
     "pm": [
-        "dylan-team-loop",
+        "relayloop",
         "brainstorming",
         "writing-plans",
         "executing-plans",
@@ -666,7 +666,7 @@ def project_harness_summary(enabled: bool, dry_run: bool, actions: list[dict], s
 
 def agents_json(project_name: str, project_path: Path, project_id: str, roles: list[str], created_at: str) -> dict:
     return {
-        "schema": "dylan-team-loop.agents.v1",
+        "schema": "relayloop.agents.v1",
         "project": {
             "name": project_name,
             "projectPath": str(project_path),

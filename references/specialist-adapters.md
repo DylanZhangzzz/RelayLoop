@@ -33,7 +33,7 @@ The proposed `team-loop/vendor/` area stores lock/source metadata only. It does 
 
 ```json
 {
-  "schema": "dylan-team-loop.specialist-profile.v1",
+  "schema": "relayloop.specialist-profile.v1",
   "id": "security-engineer",
   "displayName": "Security Engineer",
   "source": {

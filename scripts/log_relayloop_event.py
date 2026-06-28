@@ -68,7 +68,7 @@ def main() -> int:
     for key, value in args.field:
         event[key] = value
 
-    event.setdefault("schema", "dylan-team-loop.event.v1")
+    event.setdefault("schema", "relayloop.event.v1")
     event.setdefault("eventType", args.event_type)
     event.setdefault("timestamp", utc_now())
 

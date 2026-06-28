@@ -191,7 +191,7 @@ function buildSpecialist(options, profileContent, importedAt) {
   const sourceName = safeSourceName(options["source-name"]);
   const contentHash = crypto.createHash("sha256").update(profileContent).digest("hex");
   return {
-    schema: "dylan-team-loop.specialist-profile.v1",
+    schema: "relayloop.specialist-profile.v1",
     id: options.id,
     displayName: options["display-name"],
     source: {
@@ -242,10 +242,10 @@ function buildPlan(options) {
   const wrappedProfilePath = path.join(teamLoopDir, "agent-profiles", "specialists", `${options.id}.md`);
   const lockPath = path.join(teamLoopDir, "vendor", `${specialist.source.name}.lock.json`);
   const registry = readJsonObject(registryPath, {
-    schema: "dylan-team-loop.specialists.v1",
+    schema: "relayloop.specialists.v1",
     specialists: [],
   });
-  if (registry.schema !== "dylan-team-loop.specialists.v1") {
+  if (registry.schema !== "relayloop.specialists.v1") {
     throw new Error(`Unsupported specialists registry schema in ${registryPath}`);
   }
   if (!Array.isArray(registry.specialists)) {
@@ -286,7 +286,7 @@ function writePlan(plan) {
   fs.writeFileSync(plan.writes.wrappedProfile, plan._wrappedProfileContent, "utf8");
 
   const lock = readJsonObject(plan.writes.lockFile, {
-    schema: "dylan-team-loop.specialist-lock.v1",
+    schema: "relayloop.specialist-lock.v1",
     source: {
       name: plan.specialist.source.name,
       repository: plan.specialist.source.repository,

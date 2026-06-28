@@ -65,8 +65,8 @@ tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
 git clone --depth 1 https://github.com/DylanZhangzzz/RelayLoop.git "$tmp"
-mkdir -p ~/.codex/skills/dylan-team-loop
-rsync -a "$tmp"/ ~/.codex/skills/dylan-team-loop/
+mkdir -p ~/.codex/skills/relayloop
+rsync -a "$tmp"/ ~/.codex/skills/relayloop/
 ```
 
 If the repository is private, authenticate GitHub access first, then run the same commands.
@@ -74,8 +74,8 @@ If the repository is private, authenticate GitHub access first, then run the sam
 Or install from a local clone:
 
 ```bash
-mkdir -p ~/.codex/skills/dylan-team-loop
-rsync -a ./ ~/.codex/skills/dylan-team-loop/
+mkdir -p ~/.codex/skills/relayloop
+rsync -a ./ ~/.codex/skills/relayloop/
 ```
 
 Then restart Codex or start a fresh Codex thread so the skill is discovered.
@@ -83,7 +83,7 @@ Then restart Codex or start a fresh Codex thread so the skill is discovered.
 Initialize a project with the Python initializer:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name "ExampleProject" \
   --project-path /path/to/project
 ```
@@ -102,15 +102,15 @@ relayloop specialists import --help
 
 The GitHub npm CLI currently helps with approved local Markdown specialist imports. It does not install the Codex skill, create Codex Agent threads, or initialize the full PM-led workflow by itself. The GitHub repository path is `DylanZhangzzz/RelayLoop`; the package and product name are RelayLoop. This is not an npm registry publication claim.
 
-## Compatibility
+## Current Paths
 
-RelayLoop currently stores project state in the project-local RelayLoop workspace (`team-loop/`) for compatibility. `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
+RelayLoop stores project state in the project-local RelayLoop workspace (`team-loop/`). `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
 
-The product name is RelayLoop. For compatibility with the current Codex skill and existing projects, the repository still keeps these literal surfaces:
+The product, skill, CLI, and schema namespace use RelayLoop naming:
 
-- `~/.codex/skills/dylan-team-loop`
+- `~/.codex/skills/relayloop`
 - `team-loop/`
-- `dylan-team-loop.*` schemas
+- `relayloop.*` schemas
 - GitHub repository path `DylanZhangzzz/RelayLoop`
 
 ## Initialize A Project
@@ -118,7 +118,7 @@ The product name is RelayLoop. For compatibility with the current Codex skill an
 Create or recreate the project-local RelayLoop workspace:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name "ExampleProject" \
   --project-path /path/to/project
 ```
@@ -140,7 +140,7 @@ team-loop/
 For app repositories, optionally scaffold the native RelayLoop Project Harness at initialization:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name "ExampleApp" \
   --project-path /path/to/app \
   --include-project-harness
@@ -151,7 +151,7 @@ This creates `AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md
 Before creating worktree-backed Dev or Test Agents, check whether the repo has a valid git `HEAD`:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py \
+python3 ~/.codex/skills/relayloop/scripts/check_worktree_ready.py \
   --project-path /path/to/project
 ```
 
@@ -162,7 +162,7 @@ If `readyForWorktree` is `false`, create an initial commit first or run Agents i
 Open Codex in the target project and ask:
 
 ```text
-Use the dylan-team-loop skill.
+Use the relayloop skill.
 
 You are the PM Agent for this project.
 Read team-loop/protocol.md, team-loop/agents.json, team-loop/progress.md,
@@ -304,12 +304,12 @@ The loop stops for the User when requirements are unclear, credentials or hardwa
 Include firmware or ML roles at initialization:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name "FirmwareProject" \
   --project-path /path/to/project \
   --project-type firmware
 
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name "MLProject" \
   --project-path /path/to/project \
   --project-type ml
@@ -501,8 +501,8 @@ npm test
 node bin/relayloop.js --help
 python3 scripts/check_worktree_ready.py --project-path .
 
-mkdir -p ~/.codex/skills/dylan-team-loop
-rsync -a ./ ~/.codex/skills/dylan-team-loop/
+mkdir -p ~/.codex/skills/relayloop
+rsync -a ./ ~/.codex/skills/relayloop/
 ```
 
 ## License

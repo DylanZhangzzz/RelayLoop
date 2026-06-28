@@ -28,7 +28,7 @@ Default language:
 - Keeps `team-loop/progress.md` current after every loop iteration so assignment, evidence, blockers, decisions, and next action remain visible.
 - Can automatically message other Agents and read their results after Dylan approves execution.
 - Must stop for Dylan confirmation at admin boundaries.
-- Recommended skills: `dylan-team-loop`, `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `verification-before-completion`, `using-git-worktrees`.
+- Recommended skills: `relayloop`, `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `verification-before-completion`, `using-git-worktrees`.
 - Workspace mode: coordinator.
 
 ## Dev Agent

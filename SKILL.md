@@ -1,5 +1,5 @@
 ---
-name: dylan-team-loop
+name: relayloop
 description: PM-led multi-agent project orchestration for Codex. Use when Dylan wants a RelayLoop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, FW, and ML agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs, message logs, commit logs, decision logs, or controlled installation of third-party skills.
 ---
 
@@ -9,7 +9,7 @@ description: PM-led multi-agent project orchestration for Codex. Use when Dylan 
 
 Use this skill to initialize and run a PM-led multi-agent project loop. Dylan talks to the PM Agent; the PM Agent creates or registers role Agents, routes `RELAYLOOP_MESSAGE v1` tasks, records every dispatch/result, and runs automatic loops after Dylan approves the plan.
 
-Compatibility note: RelayLoop currently keeps the `dylan-team-loop` skill id and `team-loop/` project directory for existing Codex/project compatibility. `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
+RelayLoop uses the `relayloop` skill id, the `RELAYLOOP_MESSAGE v1` protocol envelope, and the project-local RelayLoop workspace at `team-loop/`.
 
 ## Required References
 
@@ -123,7 +123,7 @@ Version Agent may create a new branch, commit, or update changelog/version files
 - Initialize a project workspace:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name ExampleProject \
   --project-path /path/to/project
 ```
@@ -131,14 +131,14 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
 - Check whether a project can create worktree-backed Agents:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py \
+python3 ~/.codex/skills/relayloop/scripts/check_worktree_ready.py \
   --project-path /path/to/project
 ```
 
 - Append logs:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/log_relayloop_event.py \
+python3 ~/.codex/skills/relayloop/scripts/log_relayloop_event.py \
   --team-loop-dir /path/to/project/team-loop \
   --event-type decision \
   --field actor=pm \

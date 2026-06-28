@@ -35,8 +35,8 @@ tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
 git clone --depth 1 https://github.com/DylanZhangzzz/RelayLoop.git "$tmp"
-mkdir -p ~/.codex/skills/dylan-team-loop
-rsync -a "$tmp"/ ~/.codex/skills/dylan-team-loop/
+mkdir -p ~/.codex/skills/relayloop
+rsync -a "$tmp"/ ~/.codex/skills/relayloop/
 ```
 
 重启 Codex 或开启新的 Codex thread，让 skill 被发现。
@@ -44,7 +44,7 @@ rsync -a "$tmp"/ ~/.codex/skills/dylan-team-loop/
 初始化项目：
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
   --project-name "ExampleProject" \
   --project-path /path/to/project
 ```
@@ -125,13 +125,13 @@ RELAYLOOP_MESSAGE v1
 - Codex worktrees：项目已有有效 `HEAD` 后可用于隔离 Dev/Test
 - Claude Code / Hermes：预留未来适配
 
-## 兼容说明
+## 当前路径
 
-产品名是 RelayLoop。为了兼容当前 Codex skill 和已有项目结构，仓库仍保留：
+RelayLoop 当前统一使用 RelayLoop 命名。项目本地状态仍写入 RelayLoop 工作区（`team-loop/`），协议名是 `RELAYLOOP_MESSAGE v1`：
 
-- `~/.codex/skills/dylan-team-loop`
+- `~/.codex/skills/relayloop`
 - `team-loop/`
-- `dylan-team-loop.*` schema
+- `relayloop.*` schema
 - GitHub 仓库路径 `DylanZhangzzz/RelayLoop`
 
 `RELAYLOOP_MESSAGE v1` 是当前 canonical v1 协议名。

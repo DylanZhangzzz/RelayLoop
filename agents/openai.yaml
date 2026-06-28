@@ -1,4 +1,4 @@
 interface:
   display_name: "RelayLoop"
   short_description: "Coordinate PM-led multi-agent project loops"
-  default_prompt: "Use $dylan-team-loop to initialize a RelayLoop PM-led multi-agent project loop."
+  default_prompt: "Use $relayloop to initialize a RelayLoop PM-led multi-agent project loop."

@@ -121,9 +121,9 @@ test("specialists import --write creates specialists registry, wrapped profile, 
   const lockPath = path.join(workspace.teamLoopDir, "vendor", "agency-agents.lock.json");
 
   const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-  assert.equal(registry.schema, "dylan-team-loop.specialists.v1");
+  assert.equal(registry.schema, "relayloop.specialists.v1");
   assert.equal(registry.specialists.length, 1);
-  assert.equal(registry.specialists[0].schema, "dylan-team-loop.specialist-profile.v1");
+  assert.equal(registry.specialists[0].schema, "relayloop.specialist-profile.v1");
   assert.equal(registry.specialists[0].workspaceMode, "readonly");
   assert.deepEqual(registry.specialists[0].allowedModes, ["task", "goal", "review"]);
   assert.equal(registry.specialists[0].requiresRelayLoopEnvelope, true);
@@ -138,7 +138,7 @@ test("specialists import --write creates specialists registry, wrapped profile, 
   assert.match(wrapped, /Do not install dependencies, run external scripts/);
 
   const lock = JSON.parse(fs.readFileSync(lockPath, "utf8"));
-  assert.equal(lock.schema, "dylan-team-loop.specialist-lock.v1");
+  assert.equal(lock.schema, "relayloop.specialist-lock.v1");
   assert.equal(lock.source.name, "agency-agents");
   assert.equal(lock.source.scriptReview, "not-run");
 });
