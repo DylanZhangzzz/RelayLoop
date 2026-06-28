@@ -23,6 +23,10 @@
   <a href="#safety-model">Safety</a>
 </p>
 
+<p align="center">
+  English | <a href="./README.zh-CN.md">简体中文</a>
+</p>
+
 ## What Is RelayLoop?
 
 RelayLoop is a **Codex-first PM-led relay layer for engineering agent teams**.
