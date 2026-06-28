@@ -19,6 +19,7 @@
   <a href="#what-makes-it-different">Advantages</a> |
   <a href="#how-the-loop-runs">How It Runs</a> |
   <a href="#roles">Roles</a> |
+  <a href="#bring-your-own-agents">Bring Your Own Agents</a> |
   <a href="#safety-model">Safety</a>
 </p>
 
@@ -225,6 +226,26 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --project-type ml
 ```
 
+## Bring Your Own Agents
+
+Dylan Team Loop is the team operating system. [agency-agents](https://github.com/msitarzewski/agency-agents) can be an optional specialist talent pool.
+
+Team Loop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `TEAMLOOP_MESSAGE v1`, `team-loop/progress.md`, messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
+
+Optional specialist libraries such as agency-agents can provide expert profiles, for example Security Engineer, Backend Architect, UX Researcher, Technical Writer, Performance Engineer, or other domain roles. At the reviewed upstream source, the agency-agents README describes a collection of AI agent personalities and reports 232 specialized agents across 16 divisions. Its agent files are Markdown/profile-style definitions, and its Codex integration can generate standalone TOML custom-agent files for `~/.codex/agents/`.
+
+Team Loop can wrap approved specialists in its message contract so PM can dispatch them like any other role while keeping project state and audit logs local. Team Loop should not recommend running third-party convert/install scripts until they have been reviewed.
+
+This is different from framework-centered tools:
+
+| Layer | Role |
+|---|---|
+| AutoGen / CrewAI | General multi-agent orchestration frameworks |
+| agency-agents | Optional role/profile library for specialist personas |
+| Dylan Team Loop | PM-led project protocol, progress state, audit logs, and approval gates |
+
+Specialist import is a proposed adapter path, not part of the current scripts. Future import/install work must stop for Dylan approval, use a pinned source/ref, include license and source metadata, distinguish non-executable Markdown profiles from executable shell scripts, and avoid executing external scripts by default. See `references/specialist-adapters.md` for the proposed architecture.
+
 ## TEAMLOOP_MESSAGE v1
 
 Every cross-Agent dispatch uses the same searchable envelope:
@@ -329,6 +350,7 @@ The method is designed to be portable, but only Codex support is documented as r
     protocol.md
     roles.md
     project-files.md
+    specialist-adapters.md
     agent-skill-recommendations.md
   scripts/
     init_team_loop.py
