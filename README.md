@@ -26,7 +26,7 @@
 
 Dylan Team Loop is a **Codex-first PM-led engineering team harness**.
 
-It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: Dylan gives the PM Agent an objective; PM routes structured work to role Agents; Agents return results; logs land in the repo; and the loop stops when human approval is required.
+It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: Dylan gives the PM Agent an objective; PM routes structured work to role Agents; PM maintains the project state in `team-loop/progress.md`; Agents return results; logs land in the repo; and the loop stops when human approval is required.
 
 ```text
 Dylan -> PM Agent -> Dev Agent -> Review Agent + Test Agent -> Dev repair loop -> Version Agent -> Dylan
@@ -113,7 +113,7 @@ Once Dylan approves a plan, the PM Agent defaults to routing `TEAMLOOP_MESSAGE v
 |---|---|
 | Generic frameworks feel heavy | Install one Codex skill and initialize one `team-loop/` harness inside an existing repo |
 | Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
-| One agent loses context over long work | PM keeps durable repo-local state in `team-loop/` files |
+| One agent loses context over long work | PM keeps a living project dashboard in `team-loop/progress.md` |
 | Parallel Agents create chaos | Every dispatch uses `TEAMLOOP_MESSAGE v1` with required return fields |
 | Reviews happen too late | Review and Test Agents are part of the default loop |
 | Worktrees fail on empty repos | Preflight detects missing `HEAD` before worktree creation |
@@ -130,6 +130,21 @@ Many loop and multi-agent projects are powerful but abstract. Dylan Team Loop is
 
 AutoGen-style and crew-style systems often let Agents talk a lot while ownership gets fuzzy. Dylan Team Loop models a real small engineering team: PM plans and routes, Dev implements, Test verifies, Review audits, Version checks git/release readiness, Research investigates, and UX evaluates product flow.
 
+### PM-maintained project progress
+
+Unlike chat-only multi-agent setups, Dylan Team Loop keeps a PM-maintained project progress file. `team-loop/progress.md` is the living project dashboard: what is assigned, what came back, what is blocked, what needs human approval, and what happens next.
+
+This is the active single source of truth for multi-agent work. It tracks:
+
+- current state: `planned`, `assigned_dev`, `review_testing`, `changes_requested`, `approved`, `versioning`, `reported`;
+- current loop iteration and limit;
+- each Agent's status;
+- recently dispatched tasks and returned results;
+- blockers, risks, and Dylan decision needs;
+- next action.
+
+That makes the loop resilient to context drift and state loss.
+
 ### Repo-local memory
 
 The `team-loop/` directory is the durable spine:
@@ -137,7 +152,7 @@ The `team-loop/` directory is the durable spine:
 - `agents.json` records Agent threads, roles, workspace modes, and responsibilities.
 - `messages.ndjson` records dispatches and response summaries.
 - `decisions.ndjson` records approvals, scope changes, and escalations.
-- `progress.md` gives humans the current state, blockers, and next action.
+- `progress.md` is the PM-maintained project dashboard for state, assignments, returned results, blockers, decisions, loop limits, Agent status, and next action.
 
 That makes the loop auditable, recoverable, and handoff-friendly in a way pure chat history is not.
 
@@ -186,7 +201,7 @@ The loop stops for Dylan when requirements are unclear, credentials or hardware 
 
 | Agent | Default mode | Job |
 |---|---:|---|
-| PM | coordinator | Plans, routes, tracks status, accepts work, reports to Dylan |
+| PM | coordinator | Plans, routes, maintains project state, accepts work, reports to Dylan |
 | Dev | worktree | Implements features, bug fixes, and scoped code changes |
 | Test | worktree | Designs tests, reproduces bugs, and verifies acceptance criteria |
 | Review | readonly | Reviews diffs, architecture risk, regression risk, and test quality |
@@ -295,7 +310,7 @@ The method is designed to be portable, but only Codex support is documented as r
 | File | Purpose |
 |---|---|
 | `team-loop/agents.json` | Role registry, thread IDs, workspace modes, responsibilities |
-| `team-loop/progress.md` | Human-readable state, blockers, loop iteration, next action |
+| `team-loop/progress.md` | PM-maintained project dashboard: state, loop iteration and limit, Agent status, recent dispatches/results, blockers, Dylan decision needs, next action |
 | `team-loop/messages.ndjson` | Dispatches and response summaries |
 | `team-loop/decisions.ndjson` | Dylan approvals, PM approvals, scope changes, escalations |
 | `team-loop/commits.ndjson` | Commit proposals, branch actions, changelog/version checks |
