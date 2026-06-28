@@ -1,9 +1,9 @@
-# Dylan Team Loop
+# RelayLoop
 
 <p align="center">
-  <strong>Codex-first PM-led engineering team harness</strong>
+  <strong>PM-led engineering loops for Codex agent teams</strong>
   <br>
-  Turn one project objective into routed Codex Agent work, review loops, verification, git readiness, and repo-local memory.
+  RelayLoop is the relay layer that turns one objective into dispatched Agent work, durable project state, review/test loops, and git readiness.
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="#quick-install">Quick Install</a> |
-  <a href="#why-team-loop">Why Team Loop</a> |
+  <a href="#why-relayloop">Why RelayLoop</a> |
   <a href="#what-makes-it-different">Advantages</a> |
   <a href="#how-the-loop-runs">How It Runs</a> |
   <a href="#roles">Roles</a> |
@@ -23,21 +23,37 @@
   <a href="#safety-model">Safety</a>
 </p>
 
-## What Is Dylan Team Loop?
+## What Is RelayLoop?
 
-Dylan Team Loop is a **Codex-first PM-led engineering team harness**.
+RelayLoop is a **Codex-first PM-led relay layer for engineering agent teams**.
 
-It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: Dylan gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains `team-loop/progress.md` as the Project Progress File and active single source of truth; Agents return results; audit logs land in the repo; and the loop stops when human approval is required.
+It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: the project owner gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains `team-loop/progress.md` as the Project Progress File and active single source of truth; Agents return results; audit logs land in the repo; and the loop stops when human approval is required.
 
 ```text
-Dylan -> PM Agent -> Dev Agent -> Review Agent + Test Agent -> Dev repair loop -> Version Agent -> Dylan
+Project owner
+  -> PM Agent
+     -> team-loop/progress.md  (living project dashboard)
+     -> Dev
+     -> Review + Test
+     -> Dev repair loop
+     -> Version
+  -> project owner
 ```
 
-It is built for real engineering work where you want the speed of multiple Agents without losing the thread: who was assigned what, what changed, what passed, what is blocked, and when Dylan must decide.
+Proof at a glance:
+
+- PM-led dispatch: PM assigns work to the right role Agent instead of letting a chat drift.
+- `team-loop/progress.md`: the active source of truth for assignments, returns, blockers, approvals, and next action.
+- Project Harness: `AGENTS.md` and `specs/` turn project intent into role contracts.
+- Audit logs and approval gates: messages, decisions, commits, and admin stops are repo-local.
+
+It is built for real engineering work where you want the speed of multiple Agents without losing the thread: who was assigned what, what changed, what passed, what is blocked, and when a human decision is needed.
 
 ## Quick Install
 
-Install the Codex skill from GitHub:
+### Codex Skill + Project Init
+
+Install the Codex skill first. This is the primary path for the PM-led workflow because Codex discovers RelayLoop from `~/.codex/skills`.
 
 ```bash
 tmp="$(mktemp -d)"
@@ -59,9 +75,35 @@ rsync -a ./ ~/.codex/skills/dylan-team-loop/
 
 Then restart Codex or start a fresh Codex thread so the skill is discovered.
 
+Initialize a project with the Python initializer:
+
+```bash
+python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+  --project-name "ExampleProject" \
+  --project-path /path/to/project
+```
+
+This creates the project-local `team-loop/` workspace used by the PM Agent, role Agents, progress file, and audit logs.
+
+### Optional Specialist Import CLI
+
+Install the RelayLoop CLI from the current GitHub repository when you want the `relayloop specialists import` helper:
+
+```bash
+npm install -g github:DylanZhangzzz/Dylan-Team-loop
+relayloop --help
+relayloop specialists import --help
+```
+
+The GitHub npm CLI currently helps with approved local Markdown specialist imports. It does not install the Codex skill, create Codex Agent threads, or initialize the full PM-led workflow by itself. The GitHub repository path is still `DylanZhangzzz/Dylan-Team-loop`; the package and product name are RelayLoop. This is not an npm registry publication claim.
+
+## Compatibility
+
+RelayLoop currently uses the project-local `team-loop/` directory and `TEAMLOOP_MESSAGE v1` envelope for storage/protocol compatibility. Those names are intentional legacy-compatible surfaces, not the product name.
+
 ## Initialize A Project
 
-Create the project-local Team Loop workspace:
+Create or recreate the project-local RelayLoop workspace:
 
 ```bash
 python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
@@ -83,7 +125,7 @@ team-loop/
   protocol.md
 ```
 
-For app repositories, optionally scaffold the native Team Loop Project Harness at initialization:
+For app repositories, optionally scaffold the native RelayLoop Project Harness at initialization:
 
 ```bash
 python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
@@ -119,9 +161,9 @@ Wait for my project objective before dispatching work.
 
 Once Dylan approves a plan, the PM Agent defaults to routing `TEAMLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
 
-## Why Team Loop
+## Why RelayLoop
 
-| Problem | Team Loop answer |
+| Problem | RelayLoop answer |
 |---|---|
 | Generic frameworks feel heavy | Install one Codex skill and initialize one `team-loop/` harness inside an existing repo |
 | Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
@@ -136,15 +178,15 @@ Once Dylan approves a plan, the PM Agent defaults to routing `TEAMLOOP_MESSAGE v
 
 ### Codex-first, not concept-first
 
-Many loop and multi-agent projects are powerful but abstract. Dylan Team Loop is designed to run directly in Codex Desktop with Codex threads: PM sends the task, the Agent replies, the PM logs the result, and the project state updates on disk.
+Many loop and multi-agent projects are powerful but abstract. RelayLoop is designed to run directly in Codex Desktop with Codex threads: PM sends the task, the Agent replies, the PM logs the result, and the project state updates on disk.
 
 ### PM-led, not agent chat
 
-AutoGen-style and crew-style systems often let Agents talk a lot while ownership gets fuzzy. Dylan Team Loop models a real small engineering team: PM plans and routes, Dev implements, Test verifies, Review audits, Version checks git/release readiness, Research investigates, and UX evaluates product flow.
+AutoGen-style and crew-style systems often let Agents talk a lot while ownership gets fuzzy. RelayLoop models a real small engineering team: PM plans and routes, Dev implements, Test verifies, Review audits, Version checks git/release readiness, Research investigates, and UX evaluates product flow.
 
 ### PM-maintained project progress
 
-Unlike chat-only multi-agent setups, Dylan Team Loop keeps a PM Agent-maintained Project Progress File. `team-loop/progress.md` is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs human approval, and what happens next. PM updates it after every loop iteration.
+Unlike chat-only multi-agent setups, RelayLoop keeps a PM Agent-maintained Project Progress File. `team-loop/progress.md` is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs human approval, and what happens next. PM updates it after every loop iteration.
 
 This is the active single source of truth for multi-agent work. It tracks:
 
@@ -239,13 +281,13 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
 
 ## Bring Your Own Agents
 
-Dylan Team Loop is the team operating system. [agency-agents](https://github.com/msitarzewski/agency-agents) can be an optional specialist talent pool.
+RelayLoop is the team operating system. [agency-agents](https://github.com/msitarzewski/agency-agents) can be an optional specialist talent pool.
 
-Team Loop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `TEAMLOOP_MESSAGE v1`, `team-loop/progress.md`, messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
+RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `TEAMLOOP_MESSAGE v1`, `team-loop/progress.md`, messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
 
 Optional specialist libraries such as agency-agents can provide expert profiles, for example Security Engineer, Backend Architect, UX Researcher, Technical Writer, Performance Engineer, or other domain roles. At the reviewed upstream source, the agency-agents README describes a collection of AI agent personalities and reports 232 specialized agents across 16 divisions. Its agent files are Markdown/profile-style definitions, and its Codex integration can generate standalone TOML custom-agent files for `~/.codex/agents/`.
 
-Team Loop can wrap approved specialists in its message contract so PM can dispatch them like any other role while keeping project state and audit logs local. Team Loop should not recommend running third-party convert/install scripts until they have been reviewed.
+RelayLoop can wrap approved specialists in its message contract so PM can dispatch them like any other role while keeping project state and audit logs local. RelayLoop should not recommend running third-party convert/install scripts until they have been reviewed.
 
 This is different from framework-centered tools:
 
@@ -253,12 +295,12 @@ This is different from framework-centered tools:
 |---|---|
 | AutoGen / CrewAI | General multi-agent orchestration frameworks |
 | agency-agents | Optional role/profile library for specialist personas |
-| Dylan Team Loop | PM-led project protocol, progress state, audit logs, and approval gates |
+| RelayLoop | PM-led project protocol, progress state, audit logs, and approval gates |
 
-Specialist import is available in the local development CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target `team-loop/` directory.
+Specialist import is available in the RelayLoop CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target `team-loop/` directory.
 
 ```bash
-node bin/teamloop.js specialists import \
+relayloop specialists import \
   --team-loop-dir /path/to/project/team-loop \
   --profile-file /path/to/approved-profile.md \
   --id security-engineer \
@@ -270,7 +312,7 @@ node bin/teamloop.js specialists import \
   --license MIT
 ```
 
-The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Add `--write --approved-by Dylan` only after Dylan has approved the source/ref/license metadata. This package is not currently documented as published to npm; use the local `node bin/teamloop.js ...` form from a checkout.
+The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Add `--write --approved-by Dylan` only after Dylan has approved the source/ref/license metadata. From a checkout, use `node bin/relayloop.js ...`; `teamloop` remains a legacy bin alias.
 
 ## TEAMLOOP_MESSAGE v1
 
@@ -308,6 +350,8 @@ END_TEAMLOOP_MESSAGE
 
 This makes Agent work auditable. Dispatches and response summaries go to `team-loop/messages.ndjson`; decisions go to `team-loop/decisions.ndjson`; version and commit events go to `team-loop/commits.ndjson`.
 
+`TEAMLOOP_MESSAGE v1` is retained as a compatibility protocol name while the product is RelayLoop.
+
 ## Safety Model
 
 The PM Agent may coordinate work and read Agent results after Dylan approves execution. It must stop for Dylan confirmation before:
@@ -324,7 +368,7 @@ A push is distinct from a merge or release: safe committed-change pushes are Ver
 
 ## Codex Support Today
 
-Dylan Team Loop is Codex-first today:
+RelayLoop is Codex-first today:
 
 - Codex skills live under `~/.codex/skills/`.
 - Codex threads act as role Agents.
@@ -374,6 +418,7 @@ The method is designed to be portable, but only Codex support is documented as r
   agents/
     openai.yaml
   bin/
+    relayloop.js
     teamloop.js
   references/
     protocol.md
@@ -397,6 +442,8 @@ Clone the repo, inspect the scripts, and install locally:
 git clone https://github.com/DylanZhangzzz/Dylan-Team-loop.git
 cd Dylan-Team-loop
 
+npm test
+node bin/relayloop.js --help
 python3 scripts/check_worktree_ready.py --project-path .
 
 mkdir -p ~/.codex/skills/dylan-team-loop

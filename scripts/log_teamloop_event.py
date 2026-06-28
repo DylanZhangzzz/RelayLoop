@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append Team Loop message, commit, and decision events as NDJSON."""
+"""Append RelayLoop message, commit, and decision events as NDJSON."""
 
 from __future__ import annotations
 
@@ -52,7 +52,7 @@ def load_payload(raw: str | None) -> dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Append a Team Loop event.")
+    parser = argparse.ArgumentParser(description="Append a RelayLoop event.")
     parser.add_argument("--team-loop-dir", required=True)
     parser.add_argument("--event-type", required=True, choices=sorted(EVENT_FILES))
     parser.add_argument("--payload-json")
@@ -61,7 +61,7 @@ def main() -> int:
 
     team_dir = Path(args.team_loop_dir).expanduser().resolve()
     if not team_dir.is_dir():
-        print(f"Team Loop directory does not exist: {team_dir}", file=sys.stderr)
+        print(f"RelayLoop directory does not exist: {team_dir}", file=sys.stderr)
         return 2
 
     event = load_payload(args.payload_json)

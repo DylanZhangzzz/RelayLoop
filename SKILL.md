@@ -1,13 +1,15 @@
 ---
 name: dylan-team-loop
-description: PM-led multi-agent project orchestration for Codex. Use when Dylan wants a Team Loop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, FW, and ML agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs, message logs, commit logs, decision logs, or controlled installation of third-party skills.
+description: PM-led multi-agent project orchestration for Codex. Use when Dylan wants a RelayLoop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, FW, and ML agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs, message logs, commit logs, decision logs, or controlled installation of third-party skills.
 ---
 
-# Dylan Team Loop
+# RelayLoop
 
 ## Overview
 
 Use this skill to initialize and run a PM-led multi-agent project loop. Dylan talks to the PM Agent; the PM Agent creates or registers role Agents, routes `TEAMLOOP_MESSAGE v1` tasks, records every dispatch/result, and runs automatic loops after Dylan approves the plan.
+
+Compatibility note: RelayLoop currently keeps the `dylan-team-loop` skill id, `team-loop/` project directory, and `TEAMLOOP_MESSAGE v1` envelope for existing Codex/project compatibility.
 
 ## Required References
 
@@ -37,7 +39,7 @@ Load only what is needed:
    - If worktree preflight reports `readyForWorktree: false`, do not request a worktree-backed Agent yet. Either ask Dylan to create an initial commit or create that Agent in the local project environment until a valid HEAD exists.
    - If preflight reports a valid `branch`, use that branch only when it exists. Do not assume `main`.
 8. Write all returned thread IDs to `team-loop/agents.json`.
-9. Use `codex_app.set_thread_title` with the Team Loop title convention:
+9. Use `codex_app.set_thread_title` with the RelayLoop title convention:
    - PM thread: `<project> - PM Agent`, because it may be pinned outside the project group.
    - Other project-scoped Agent threads: `<Role> Agent`, for example `Dev Agent`, `Test Agent`, `Review Agent`. Do not prefix them with the project name when they already appear under that project in the Codex sidebar.
    - Projectless or cross-project threads: `<project> - <Role> Agent`.
@@ -126,5 +128,5 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/log_teamloop_event.py \
   --team-loop-dir /path/to/project/team-loop \
   --event-type decision \
   --field actor=pm \
-  --field summary="Dylan approved initial Team Loop setup"
+  --field summary="Dylan approved initial RelayLoop setup"
 ```

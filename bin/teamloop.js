@@ -17,38 +17,38 @@ const REQUIRED_IMPORT_OPTIONS = [
 ];
 
 function printRootHelp() {
-  console.log(`teamloop
+  console.log(`relayloop
 
 Usage:
-  teamloop --help
-  teamloop specialists --help
-  teamloop specialists import --help
-  teamloop specialists import [options]
+  relayloop --help
+  relayloop specialists --help
+  relayloop specialists import --help
+  relayloop specialists import [options]
 
 Commands:
-  teamloop specialists import   Import approved local Markdown into Team Loop.
+  relayloop specialists import   Import approved local Markdown into RelayLoop.
 
-This CLI works with project-local Team Loop files only.`);
+RelayLoop uses project-local \`team-loop/\` files for storage compatibility.`);
 }
 
 function printSpecialistsHelp() {
-  console.log(`teamloop specialists
+  console.log(`relayloop specialists
 
 Usage:
-  teamloop specialists import [options]
+  relayloop specialists import [options]
 
 Commands:
   import   Import an approved local Markdown specialist profile.`);
 }
 
 function printImportHelp() {
-  console.log(`teamloop specialists import
+  console.log(`relayloop specialists import
 
-Imports approved local Markdown into Team Loop only. It does not fetch remote content,
+Imports approved local Markdown into RelayLoop only. It does not fetch remote content,
 does not run upstream scripts, and does not install Codex agents.
 
 Usage:
-  teamloop specialists import \\
+  relayloop specialists import \\
     --team-loop-dir <path> \\
     --profile-file <local .md/.markdown path> \\
     --id <specialist-id> \\
@@ -62,7 +62,7 @@ Usage:
     [--write] [--force]
 
 Options:
-  --write              Write project-local Team Loop files. Default is dry-run.
+  --write              Write project-local RelayLoop files. Default is dry-run.
   --force              Replace an existing specialist with the same id.
   --approved-by Dylan  Required exactly for --write in v1.
 
@@ -148,9 +148,9 @@ function wrappedProfile(profileContent, specialist) {
   const body = profileContent.trimEnd();
   return `# ${specialist.displayName} Specialist
 
-## Team Loop Contract
+## RelayLoop Contract
 
-You are an optional Specialist Agent inside Dylan Team Loop. Respond only to \`TEAMLOOP_MESSAGE v1\` tasks from PM.
+You are an optional Specialist Agent inside RelayLoop. Respond only to \`TEAMLOOP_MESSAGE v1\` tasks from PM.
 
 Return Summary, Files changed, Commands run, Risks/blockers, and Next recommended action.
 
@@ -181,7 +181,7 @@ Default to read-only unless PM explicitly grants edit scope.
 
 ${body}
 
-## Team Loop Footer
+## RelayLoop Footer
 
 Do not install dependencies, run external scripts, edit files, or contact external services unless PM explicitly assigns that scope and Dylan approval covers it.
 `;
@@ -223,7 +223,7 @@ function buildPlan(options) {
   const profileFile = path.resolve(options["profile-file"]);
   assertMarkdownProfileFile(profileFile);
   if (!fs.existsSync(teamLoopDir) || !fs.statSync(teamLoopDir).isDirectory()) {
-    throw new Error(`Team Loop directory does not exist: ${teamLoopDir}`);
+    throw new Error(`RelayLoop directory does not exist: ${teamLoopDir}`);
   }
   if (!fs.existsSync(profileFile) || !fs.statSync(profileFile).isFile()) {
     throw new Error(`Profile file does not exist: ${profileFile}`);
@@ -368,3 +368,5 @@ function main(argv) {
 if (require.main === module) {
   process.exitCode = main(process.argv);
 }
+
+module.exports = { main };

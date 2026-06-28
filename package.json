@@ -1,9 +1,14 @@
 {
-  "name": "dylan-team-loop",
+  "name": "relayloop",
   "version": "0.1.0",
-  "private": true,
-  "description": "PM-led Team Loop CLI for local specialist profile imports.",
+  "description": "RelayLoop CLI for PM-led Codex agent loops and local specialist profile imports.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DylanZhangzzz/Dylan-Team-loop.git"
+  },
   "bin": {
+    "relayloop": "bin/relayloop.js",
     "teamloop": "bin/teamloop.js"
   },
   "scripts": {

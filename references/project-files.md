@@ -1,4 +1,4 @@
-# Team Loop Project Files
+# RelayLoop Project Files
 
 ## Directory
 
@@ -31,7 +31,9 @@ team-loop/
   protocol.md
 ```
 
-With `--include-project-harness`, the initializer also creates native Team Loop Project Harness files outside `team-loop/`:
+Compatibility note: RelayLoop currently writes project-local state under `team-loop/` and keeps `dylan-team-loop.*` schemas for backward compatibility.
+
+With `--include-project-harness`, the initializer also creates native RelayLoop Project Harness files outside `team-loop/`:
 
 ```text
 AGENTS.md
@@ -43,7 +45,7 @@ specs/
 .gitignore  # appends .agent-runs/ once
 ```
 
-These files are portable built-in placeholders and native Team Loop project intent / role-contract files. PM must complete grill-me discovery Q&A with Dylan before treating `AGENTS.md` and `specs/` as final.
+These files are portable built-in placeholders and native RelayLoop project intent / role-contract files. PM must complete grill-me discovery Q&A with Dylan before treating `AGENTS.md` and `specs/` as final.
 
 Use `--dry-run` to preview planned writes/skips without creating files. Existing Project Harness files such as `AGENTS.md` and `specs/` are preserved unless `--force` is explicitly passed. When `--include-project-harness` is used, `.gitignore` may be safely appended with `.agent-runs/`; the entry is deduped and existing ignore content is preserved.
 

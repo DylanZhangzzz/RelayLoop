@@ -1,4 +1,4 @@
-# Team Loop Protocol
+# RelayLoop Protocol
 
 ## Message Envelope
 
@@ -35,6 +35,8 @@ END_TEAMLOOP_MESSAGE
 ```
 
 Append the same payload or a normalized JSON representation to `team-loop/messages.ndjson`.
+
+Compatibility note: `TEAMLOOP_MESSAGE v1` and `team-loop/` are retained protocol/storage names for RelayLoop compatibility.
 
 ## Task Modes
 

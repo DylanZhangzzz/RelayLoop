@@ -2,17 +2,17 @@
 
 ## Purpose
 
-Dylan Team Loop is the team operating system: PM-led dispatch, project state, audit logs, approval gates, and Codex execution. Optional specialist libraries such as `agency-agents` can act as a specialist talent pool, but Team Loop keeps ownership of coordination and state.
+RelayLoop is the team operating system: PM-led dispatch, project state, audit logs, approval gates, and Codex execution. Optional specialist libraries such as `agency-agents` can act as a specialist talent pool, but RelayLoop keeps ownership of coordination and state.
 
-This document describes the specialist adapter model. The current implementation is a local npm-style CLI entrypoint at `bin/teamloop.js`; it imports approved local Markdown only and does not fetch remote content or run upstream scripts.
+This document describes the specialist adapter model. The current implementation is the RelayLoop CLI, with `bin/relayloop.js` as the preferred source checkout entrypoint and `teamloop` retained as a legacy bin alias. It imports approved local Markdown only and does not fetch remote content or run upstream scripts.
 
-At the reviewed upstream source, `agency-agents` describes itself as a collection of AI agent personalities and specialist agents. Its README reports 232 specialized agents across 16 divisions, with Markdown/profile-style agent definitions and Codex integration docs that generate standalone TOML custom-agent files for `~/.codex/agents/`. Team Loop may adapt reviewed profile content, but should not run third-party conversion or install scripts by default.
+At the reviewed upstream source, `agency-agents` describes itself as a collection of AI agent personalities and specialist agents. Its README reports 232 specialized agents across 16 divisions, with Markdown/profile-style agent definitions and Codex integration docs that generate standalone TOML custom-agent files for `~/.codex/agents/`. RelayLoop may adapt reviewed profile content, but should not run third-party conversion or install scripts by default.
 
 ## Adapter Model
 
-External persona/profile -> Team Loop `SpecialistProfile`.
+External persona/profile -> RelayLoop `SpecialistProfile`.
 
-A `SpecialistProfile` is a normalized wrapper around a third-party persona. It records source metadata, Team Loop role identity, safety defaults, and the response contract required for PM dispatch.
+A `SpecialistProfile` is a normalized wrapper around a third-party persona. It records source metadata, RelayLoop role identity, safety defaults, and the response contract required for PM dispatch.
 
 Proposed project layout:
 
@@ -62,9 +62,9 @@ The proposed `team-loop/vendor/` area stores lock/source metadata only. It does 
 ```markdown
 # Security Engineer Specialist
 
-## Team Loop Contract
+## RelayLoop Contract
 
-You are an optional Specialist Agent inside Dylan Team Loop. Respond only to `TEAMLOOP_MESSAGE v1` tasks from PM. Return Summary, Files changed, Commands run, Risks/blockers, and Next recommended action. Default to read-only unless PM explicitly grants edit scope.
+You are an optional Specialist Agent inside RelayLoop. Respond only to `TEAMLOOP_MESSAGE v1` tasks from PM. Return Summary, Files changed, Commands run, Risks/blockers, and Next recommended action. Default to read-only unless PM explicitly grants edit scope.
 
 ## Source Metadata
 
@@ -78,7 +78,7 @@ You are an optional Specialist Agent inside Dylan Team Loop. Respond only to `TE
 
 <approved profile content or concise adapted excerpt>
 
-## Team Loop Footer
+## RelayLoop Footer
 
 Do not install dependencies, run external scripts, change files, or contact external services unless PM explicitly assigns that scope and Dylan approval has covered the third-party boundary.
 ```
@@ -89,15 +89,15 @@ Do not install dependencies, run external scripts, change files, or contact exte
 2. PM checks `team-loop/specialists.json` for an approved SpecialistProfile.
 3. If no approved specialist exists, PM asks Dylan before importing or adapting a third-party profile.
 4. PM dispatches a `TEAMLOOP_MESSAGE v1` task or review to the Specialist Agent.
-5. The Specialist replies with the standard Team Loop return fields.
+5. The Specialist replies with the standard RelayLoop return fields.
 6. PM records the dispatch/result in `messages.ndjson`, updates `progress.md`, and routes any follow-up to Dev, Review, Test, UX, or Version.
 
 ## Local Import CLI
 
-Use the local checkout entrypoint; this is not documented as a published npm package:
+Use the installed CLI or the local checkout entrypoint:
 
 ```bash
-node bin/teamloop.js specialists import \
+relayloop specialists import \
   --team-loop-dir /path/to/project/team-loop \
   --profile-file /path/to/approved-profile.md \
   --id security-engineer \
@@ -108,6 +108,8 @@ node bin/teamloop.js specialists import \
   --source-path engineering/security-engineer.md \
   --license MIT
 ```
+
+From a checkout, use `node bin/relayloop.js specialists import ...`.
 
 Default mode is dry-run and writes no files. `--profile-file` must be a local `.md` or `.markdown` file. `--write` requires `--approved-by Dylan` exactly and a 40-character hexadecimal source ref. Duplicate specialist IDs and existing wrapped profile files fail unless `--force` is provided.
 
@@ -128,9 +130,9 @@ Default mode is dry-run and writes no files. `--profile-file` must be a local `.
 These commands are ideas, not implemented:
 
 ```bash
-teamloop specialists search <query>
-teamloop specialists import agency-agents/security-engineer --ref <commit-sha>
-teamloop specialists list
+relayloop specialists search <query>
+relayloop specialists import agency-agents/security-engineer --ref <commit-sha>
+relayloop specialists list
 ```
 
 Any future CLI must preserve the safety gates above and avoid external script execution during search or import unless Dylan explicitly approves it.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check whether a project can create git worktrees for Team Loop agents."""
+"""Check whether a project can create git worktrees for RelayLoop agents."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def git(project: Path, *args: str) -> tuple[int, str, str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Check Team Loop worktree readiness.")
+    parser = argparse.ArgumentParser(description="Check RelayLoop worktree readiness.")
     parser.add_argument("--project-path", required=True)
     args = parser.parse_args()
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Initialize a project-local Dylan Team Loop workspace."""
+"""Initialize a project-local RelayLoop workspace."""
 
 from __future__ import annotations
 
@@ -265,7 +265,7 @@ def profile_for(role: str, include_project_harness: bool = False) -> str:
 
         ## Role
 
-        {name} works inside Dylan Team Loop. PM Agent is the only default Dylan-facing coordinator.
+        {name} works inside RelayLoop. PM Agent is the only default Dylan-facing coordinator.
 
         ## Responsibilities
 
@@ -319,7 +319,7 @@ def knowledge_file(title: str) -> str:
 def protocol_file() -> str:
     return dedent(
         """\
-        # Team Loop Protocol
+        # RelayLoop Protocol
 
         Use `TEAMLOOP_MESSAGE v1` for all cross-Agent messages.
 
@@ -359,7 +359,7 @@ def progress_file(project_name: str, roles: list[str], include_project_harness: 
         )
     return dedent(
         f"""\
-        # {project_name} Team Loop Progress
+        # {project_name} RelayLoop Progress
 
         ## State
 
@@ -652,7 +652,7 @@ def agents_json(project_name: str, project_path: Path, project_id: str, roles: l
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize a Team Loop workspace inside a project.")
+    parser = argparse.ArgumentParser(description="Initialize a RelayLoop workspace inside a project.")
     parser.add_argument("--project-name", required=True)
     parser.add_argument("--project-path", required=True)
     parser.add_argument("--project-id")

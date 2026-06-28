@@ -6,7 +6,8 @@ const path = require("node:path");
 const test = require("node:test");
 
 const repoRoot = path.resolve(__dirname, "..");
-const cliPath = path.join(repoRoot, "bin", "teamloop.js");
+const cliPath = path.join(repoRoot, "bin", "relayloop.js");
+const legacyCliPath = path.join(repoRoot, "bin", "teamloop.js");
 const pinnedRef = "0123456789abcdef0123456789abcdef01234567";
 
 function runCli(args, options = {}) {
@@ -16,6 +17,16 @@ function runCli(args, options = {}) {
     ...options,
   });
 }
+
+test("package metadata exposes relayloop with a legacy teamloop bin alias", () => {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
+
+  assert.equal(packageJson.name, "relayloop");
+  assert.equal(packageJson.private, undefined);
+  assert.equal(packageJson.bin.relayloop, "bin/relayloop.js");
+  assert.equal(packageJson.bin.teamloop, "bin/teamloop.js");
+  assert.match(packageJson.description, /RelayLoop/);
+});
 
 function makeWorkspace() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "teamloop-test-"));
@@ -206,7 +217,15 @@ test("specialists import --write requires a 40 character hex source ref", () => 
 test("help output explains local-only import safety", () => {
   const rootHelp = runCli(["--help"]);
   assert.equal(rootHelp.status, 0, rootHelp.stderr);
-  assert.match(rootHelp.stdout, /teamloop specialists import/);
+  assert.match(rootHelp.stdout, /relayloop specialists import/);
+  assert.match(rootHelp.stdout, /RelayLoop/);
+
+  const legacyHelp = spawnSync(process.execPath, [legacyCliPath, "--help"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+  assert.equal(legacyHelp.status, 0, legacyHelp.stderr);
+  assert.match(legacyHelp.stdout, /relayloop specialists import/);
 
   const importHelp = runCli(["specialists", "import", "--help"]);
   assert.equal(importHelp.status, 0, importHelp.stderr);
