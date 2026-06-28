@@ -243,6 +243,40 @@ PROJECT_HARNESS_GUIDANCE = {
 }
 
 
+PROOF_GATED_GUIDANCE = {
+    "pm": (
+        "- Acceptance-First Dispatch is mandatory: every PM dispatch must include "
+        "Task and Acceptance sections.\n"
+        "- Acceptance must define the user-observable result, required commands or "
+        "checks, required evidence files/pages/screenshots/logs, and how Test "
+        "judges pass/fail.\n"
+        "- Keep `team-loop/progress.md` updated after every loop iteration."
+    ),
+    "dev": (
+        "- Implement against the PM's Acceptance section, not only the Task text.\n"
+        "- Return the commands run and evidence produced so Test and Review can "
+        "verify the same proof."
+    ),
+    "test": (
+        "- Judge pass/fail against the PM's Acceptance section and report Result "
+        "plus Evidence.\n"
+        "- For UI tasks, start/open the app or route and use browser/Playwright/"
+        "screenshot evidence. Include screenshot paths, viewport sizes, and "
+        "operation steps.\n"
+        "- Fail UI work for blank screens, overlapping text, broken controls, "
+        "console errors, unusable flows, or visual regressions."
+    ),
+    "review": (
+        "- Review code, architecture, regression risk, test quality, and any "
+        "acceptance or proof gaps before approval."
+    ),
+    "ux": (
+        "- For UI/product work, check the PM's Acceptance section against real "
+        "user scenarios, visual quality, accessibility, and interaction evidence."
+    ),
+}
+
+
 def profile_for(role: str, include_project_harness: bool = False) -> str:
     name = ROLE_NAMES[role]
     skills = "\n".join(f"- {skill}" for skill in RECOMMENDED_SKILLS[role])
@@ -250,60 +284,60 @@ def profile_for(role: str, include_project_harness: bool = False) -> str:
     responsibilities = "\n".join(f"- {item}" for item in RESPONSIBILITIES[role])
     project_harness_section = ""
     if include_project_harness and role in PROJECT_HARNESS_GUIDANCE:
-        project_harness_section = dedent(
-            f"""\
-
-            ## Project Harness Defaults
-
-            {PROJECT_HARNESS_GUIDANCE[role]}
-            """
+        project_harness_section = (
+            "\n## Project Harness Defaults\n\n"
+            f"{PROJECT_HARNESS_GUIDANCE[role]}\n"
+        )
+    proof_gated_section = ""
+    if role in PROOF_GATED_GUIDANCE:
+        proof_gated_section = (
+            "\n## Proof-Gated Loop\n\n"
+            f"{PROOF_GATED_GUIDANCE[role]}\n"
         )
 
-    return dedent(
-        f"""\
-        # {name} Profile
+    return f"""# {name} Profile
 
-        ## Role
+## Role
 
-        {name} works inside RelayLoop. PM Agent is the only default Dylan-facing coordinator.
+{name} works inside RelayLoop. PM Agent is the only default Dylan-facing coordinator.
 
-        ## Responsibilities
+## Responsibilities
 
-        {responsibilities}
+{responsibilities}
 
-        ## Workspace Mode
+## Workspace Mode
 
-        `{WORKSPACE_MODES[role]}`
+`{WORKSPACE_MODES[role]}`
 
-        ## Recommended Skills
+## Recommended Skills
 
-        {skills}
+{skills}
 
-        ## Knowledge References
+## Knowledge References
 
-        {refs}
-        {project_harness_section}
+{refs}
+{project_harness_section}{proof_gated_section}
+## Message Contract
 
-        ## Message Contract
+Read and respond to `RELAYLOOP_MESSAGE v1`. Respect `mode: task|goal|review`.
 
-        Read and respond to `RELAYLOOP_MESSAGE v1`. Respect `mode: task|goal|review`.
+Return:
 
-        Return:
+- Result: pass|fail|blocked when doing verification or review
+- Summary
+- Evidence
+- Files changed
+- Commands run
+- Risks/blockers
+- Next recommended action
 
-        - Summary
-        - Files changed
-        - Commands run
-        - Risks/blockers
-        - Next recommended action
+## Guardrails
 
-        ## Guardrails
-
-        - Do not install third-party skills without Dylan confirmation.
-        - Do not perform admin git actions without Dylan confirmation.
-        - Report uncertainty and blockers to PM instead of guessing.
-        - Use English for Agent-to-Agent body text unless project config says otherwise.
-        """
-    )
+- Do not install third-party skills without Dylan confirmation.
+- Do not perform admin git actions without Dylan confirmation.
+- Report uncertainty and blockers to PM instead of guessing.
+- Use English for Agent-to-Agent body text unless project config says otherwise.
+"""
 
 
 def knowledge_file(title: str) -> str:
@@ -323,6 +357,13 @@ def protocol_file() -> str:
 
         Use `RELAYLOOP_MESSAGE v1` for all cross-Agent messages.
 
+        ## Proof-Gated Loop
+
+        RelayLoop uses Acceptance-First Dispatch. PM must include `Task:` and
+        `Acceptance:` in every task, goal, or review dispatch. Work is not done
+        just because an Agent says it is done; Test and Review must verify the
+        requested proof.
+
         Required fields:
 
         - `project`
@@ -333,6 +374,20 @@ def protocol_file() -> str:
         - `requires_response`
         - `response_to`
         - `priority`
+
+        Required dispatch sections:
+
+        - `Task:` the concrete implementation, research, review, or validation request.
+        - `Acceptance:` the user-observable result, required commands/checks,
+          required evidence files/pages/screenshots/logs, and how Test should
+          judge pass/fail.
+        - `Return Format:` result, evidence, files changed, commands run,
+          risks/blockers, and next recommended action.
+
+        UI task acceptance must require real app/browser verification when the
+        app can run locally. Test must record the route, viewport, operations,
+        screenshot paths, and console/runtime issues. Blank screens, overlapping
+        text, broken controls, unusable flows, or visual regressions are failures.
 
         Default loop:
 

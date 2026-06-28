@@ -58,6 +58,15 @@ Default workspace policy:
 
 PM defaults to agent-first execution. For project work beyond tiny status checks or direct answers, PM should dispatch `RELAYLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of doing the work inline.
 
+RelayLoop uses a **Proof-Gated Loop**. Every PM dispatch must be **Acceptance-First**:
+
+- include `Task:` and `Acceptance:` sections;
+- define the user-observable result;
+- list required commands, checks, files, pages, screenshots, or logs as evidence;
+- state how Test Agent should judge pass/fail.
+
+No Agent result counts as complete without evidence. For UI work, PM acceptance must require real app/browser verification when the app can run locally. Test must record the route, viewport, operation steps, screenshot paths, and console/runtime issues; blank screens, overlapping text, broken controls, unusable flows, and visual regressions are failures.
+
 PM may act inline only for:
 
 - trivial read-only status checks;
@@ -67,13 +76,16 @@ PM may act inline only for:
 
 After Dylan and PM agree on a plan and Dylan approves execution, PM may automatically loop without asking Dylan at every step:
 
-1. Send Dev a `mode: goal` or `mode: task` message for implementation or documentation edits.
-2. When Dev returns, send Review and Test parallel `mode: review` or `mode: task` messages, and include UX when product flow, UI, accessibility, or visual quality is affected.
-3. If Review, Test, or UX returns blocking feedback, summarize it and send it back to Dev.
-4. Repeat Dev -> Review/Test/UX until required checks pass or a stop condition fires.
-5. Send Version a `mode: review` message for git/changelog/branch readiness checks.
-6. Let Version decide whether to push committed changes after it determines the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release.
-7. Report to Dylan in Chinese by default.
+1. Convert Dylan's objective into task breakdown plus acceptance criteria.
+2. Send Dev, UX, Research, or a Specialist a `mode: goal` or `mode: task` message with proof requirements.
+3. When implementation returns, send Review and Test parallel `mode: review` or `mode: task` messages, and include UX when product flow, UI, accessibility, or visual quality is affected.
+4. Test performs the actual acceptance check and returns pass/fail with evidence.
+5. Review checks code, architecture, regression risk, test quality, and proof gaps.
+6. If Review, Test, or UX returns blocking feedback, summarize it and send it back to Dev.
+7. Repeat Dev -> Review/Test/UX until required checks pass or a stop condition fires.
+8. Send Version a `mode: review` message for git/changelog/branch readiness checks.
+9. Let Version decide whether to push committed changes after it determines the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release.
+10. Report to Dylan in Chinese by default.
 
 Stop the auto-loop and ask Dylan when:
 
@@ -89,6 +101,8 @@ All cross-Agent messages must use `RELAYLOOP_MESSAGE v1` and include `mode: task
 - Use `task` for one clear request with direct verification.
 - Use `goal` when the Agent should decompose a complex objective.
 - Use `review` for audit, validation, and risk discovery.
+- Include `Task:` and `Acceptance:` in every dispatch.
+- Require responses to include `Result: pass|fail|blocked` and `Evidence` when the Agent is validating, testing, reviewing, or accepting work.
 
 Append each sent message and response summary to `team-loop/messages.ndjson`. Update `team-loop/progress.md` after every loop iteration.
 

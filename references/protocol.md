@@ -22,11 +22,15 @@ Task:
 <concrete request>
 
 Acceptance:
-- <observable result>
-- <verification command or evidence required>
+- <user-observable result>
+- <required commands/checks>
+- <required files/pages/screenshots/logs as evidence>
+- <how Test Agent should judge pass/fail>
 
 Return Format:
+- Result: <pass|fail|blocked when validating/reviewing>
 - Summary
+- Evidence
 - Files changed
 - Commands run
 - Risks/blockers
@@ -37,6 +41,48 @@ END_RELAYLOOP_MESSAGE
 Append the same payload or a normalized JSON representation to `team-loop/messages.ndjson`.
 
 Compatibility note: `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token. `team-loop/` is retained as the project-local storage directory for compatibility.
+
+## Proof-Gated Loop
+
+RelayLoop uses **Acceptance-First Dispatch**. PM must include `Task:` and `Acceptance:` in every task, goal, or review dispatch. The task states what should be done; acceptance states what proof is required before the loop can count the work as complete.
+
+Acceptance must define:
+
+- the user-observable result;
+- required commands and checks;
+- required evidence files, pages, screenshots, logs, or other artifacts;
+- how Test Agent should judge pass/fail.
+
+The default proof-gated flow is:
+
+```text
+Dylan objective
+-> PM task breakdown + acceptance criteria
+-> Dev / UX / Research / Specialist execution
+-> Test actual acceptance with evidence
+-> Review code / architecture / risk / proof gaps
+-> PM routes failures back to Dev
+-> repeat until accepted or stopped
+-> Version git scope / checks / push judgment
+-> PM reports Dylan
+```
+
+Test responses should be explicit:
+
+```text
+Result: fail
+
+Evidence:
+- Command: npm test passed
+- Browser: http://localhost:5173/settings
+- Screenshot: /tmp/team-loop/settings-mobile.png
+- Failure: Save button overlaps footer at 390px width
+
+Next recommended action:
+- Dev should adjust footer spacing and rerun the mobile viewport check.
+```
+
+For UI work, code inspection is not enough when the app can run locally. PM acceptance must require Test to start or open the app/route, use browser or Playwright verification, capture desktop and mobile screenshots when relevant, and report screenshot paths, viewport sizes, operation steps, and console/runtime issues. Blank screens, overlapping text, broken controls, unusable flows, console errors, or visual regressions are failures.
 
 ## Task Modes
 
@@ -72,9 +118,10 @@ PM may act inline only for:
 After Dylan approves a PM plan, PM may automatically run:
 
 ```text
-PM -> Dev -> PM
+PM writes Task + Acceptance
+PM -> Dev / UX / Research / Specialist -> PM
 PM -> Review + Test -> PM
-PM -> Dev repair loop
+PM -> Dev repair loop if proof fails
 PM -> Version -> PM
 PM -> Dylan
 ```

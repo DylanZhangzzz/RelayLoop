@@ -43,6 +43,7 @@ Project owner
 Proof at a glance:
 
 - PM-led dispatch: PM assigns work to the right role Agent instead of letting a chat drift.
+- Proof-Gated Loop: every dispatch includes acceptance criteria and required proof before work can be called done.
 - `team-loop/progress.md`: the active source of truth for assignments, returns, blockers, approvals, and next action.
 - Project Harness: `AGENTS.md` and `specs/` turn project intent into role contracts.
 - Audit logs and approval gates: messages, decisions, commits, and admin stops are repo-local.
@@ -169,6 +170,7 @@ Once Dylan approves a plan, the PM Agent defaults to routing `RELAYLOOP_MESSAGE 
 | Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
 | One agent loses context over long work | PM keeps a living project dashboard in `team-loop/progress.md` |
 | Parallel Agents create chaos | Every dispatch uses `RELAYLOOP_MESSAGE v1` with required return fields |
+| Agents self-report "done" without proof | PM defines acceptance; Test and Review verify evidence before approval |
 | Reviews happen too late | Review and Test Agents are part of the default loop |
 | Worktrees fail on empty repos | Preflight detects missing `HEAD` before worktree creation |
 | Automation can overreach | Admin boundaries require Dylan confirmation |
@@ -198,6 +200,21 @@ This is the active single source of truth for multi-agent work. It tracks:
 - next action.
 
 That makes the loop resilient to context drift and state loss.
+
+### Proof-Gated Loop
+
+RelayLoop does not treat "the Agent says it is done" as done. Every PM dispatch is an **Acceptance-First Dispatch**: PM writes the task and the acceptance criteria together.
+
+Each dispatch must define:
+
+- the user-observable result;
+- commands and checks that must pass;
+- files, pages, screenshots, logs, or other evidence that must be returned;
+- how Test Agent should judge pass/fail.
+
+Then Test validates the acceptance criteria with evidence, Review checks code/architecture/regression risk and proof gaps, and PM routes any failure back to Dev. That makes the loop evidence-driven instead of chat-driven.
+
+For UI work, code inspection is not enough when the app can run locally. Acceptance should require the app or route to be opened in a browser, desktop/mobile screenshots when relevant, viewport and operation steps in the Test response, and a fail result for blank screens, overlapping text, broken controls, unusable flows, console errors, or visual regressions.
 
 ### Repo-local memory
 
@@ -238,14 +255,18 @@ flowchart LR
 The PM Agent may loop automatically after Dylan approves the plan:
 
 ```text
-PM -> Dev -> PM
-PM -> Review + Test -> PM
-PM -> Dev repair loop
-PM -> Version -> PM
-PM -> Dylan
+Dylan objective
+-> PM task breakdown + acceptance criteria
+-> Dev / UX / Research / Specialist execution
+-> Test actual acceptance with evidence
+-> Review code / architecture / risk / proof gaps
+-> PM routes failures back to Dev
+-> repeat until accepted or stopped
+-> Version git scope / checks / push judgment
+-> PM reports Dylan
 ```
 
-For implementation and documentation tasks, PM sends the work to Dev first, then uses Review/Test and UX when appropriate, then asks Version for git, changelog, branch readiness, and safe push checks.
+For implementation and documentation tasks, PM sends the work to Dev first with `Task:` and `Acceptance:` sections, then uses Review/Test and UX when appropriate, then asks Version for git, changelog, branch readiness, and safe push checks.
 
 PM may act inline only for trivial read-only status checks, direct answers to Dylan, urgent admin clarification, or when no live Agent thread exists for the needed role.
 
@@ -336,11 +357,15 @@ Task:
 <concrete request>
 
 Acceptance:
-- <observable result>
-- <verification command or evidence required>
+- <user-observable result>
+- <required commands/checks>
+- <required files/pages/screenshots/logs as evidence>
+- <how Test Agent should judge pass/fail>
 
 Return Format:
+- Result: <pass|fail|blocked when validating/reviewing>
 - Summary
+- Evidence
 - Files changed
 - Commands run
 - Risks/blockers
@@ -351,6 +376,21 @@ END_RELAYLOOP_MESSAGE
 This makes Agent work auditable. Dispatches and response summaries go to `team-loop/messages.ndjson`; decisions go to `team-loop/decisions.ndjson`; version and commit events go to `team-loop/commits.ndjson`.
 
 `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token for RelayLoop.
+
+Example Test response:
+
+```text
+Result: fail
+
+Evidence:
+- Command: npm test passed
+- Browser: http://localhost:5173/settings
+- Screenshot: /tmp/team-loop/settings-mobile.png
+- Failure: Save button overlaps footer at 390px width
+
+Next recommended action:
+- Dev should adjust footer spacing and rerun the mobile viewport check.
+```
 
 ## Safety Model
 

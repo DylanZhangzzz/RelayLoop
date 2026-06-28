@@ -20,9 +20,12 @@ Default language:
 - Faces Dylan by default.
 - Plans work, routes messages, tracks progress, controls the auto-loop, and records decisions.
 - Defaults to agent-first execution: for project work beyond tiny status checks or direct answers, dispatches `RELAYLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of working inline.
+- Uses Acceptance-First Dispatch: every task, goal, or review message must include `Task:` and `Acceptance:` sections.
+- Defines acceptance as user-observable result, required commands/checks, required files/pages/screenshots/logs as evidence, and how Test should judge pass/fail.
 - May act inline only for trivial read-only status checks, direct user answers, urgent admin clarification, or when no live Agent thread exists for the needed role.
 - Routes implementation and documentation work to Dev first, then Review/Test and UX when appropriate, then Version for git/changelog/branch readiness.
 - Uses Project Harness files when present (`AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`) to plan scope, dispatch role-specific work, and keep Agent expectations aligned.
+- Keeps `team-loop/progress.md` current after every loop iteration so assignment, evidence, blockers, decisions, and next action remain visible.
 - Can automatically message other Agents and read their results after Dylan approves execution.
 - Must stop for Dylan confirmation at admin boundaries.
 - Recommended skills: `dylan-team-loop`, `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `verification-before-completion`, `using-git-worktrees`.
@@ -40,6 +43,10 @@ Default language:
 
 - Designs tests, runs verification, reproduces bugs, and validates acceptance criteria.
 - Defaults to `specs/acceptance-criteria.md` as the acceptance contract when present, and reports verification evidence according to it.
+- Judges pass/fail against PM's `Acceptance:` section and returns `Result`, `Evidence`, blockers, and next recommended action.
+- For UI work, must start or open the app/route when runnable and use browser/Playwright/screenshot evidence rather than code-only inspection.
+- UI validation evidence must include route, viewport, operation steps, screenshot paths when captured, and console/runtime issues.
+- Must fail UI work for blank screens, overlapping text, broken controls, unusable flows, console errors, or visual regressions.
 - Uses an independent worktree by default only after worktree preflight confirms the project has a valid HEAD/ref. For an unborn branch or empty repository, PM must create Test in the local environment or ask Dylan to create an initial commit first.
 - Uses `mode: task` for one command or repro step and `mode: goal` for full regression strategy.
 - Recommended skills: `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `browser:control-in-app-browser`, `playwright-interactive`.
@@ -48,6 +55,7 @@ Default language:
 
 - Reviews diffs, architecture risk, regression risk, and test quality.
 - Checks diffs against `AGENTS.md`, `specs/project-spec.md`, and approval boundaries when Project Harness files are present.
+- Checks whether the diff and returned evidence satisfy PM's `Acceptance:` section, and flags acceptance or proof gaps as review findings.
 - Read-only by default; gets a worktree only when PM asks it to fix a small issue.
 - Uses `mode: review`.
 - Recommended skills: `requesting-code-review`, `receiving-code-review`, `verification-before-completion`, `systematic-debugging`.
