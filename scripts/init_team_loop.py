@@ -19,6 +19,8 @@ FIRMWARE_TYPES = {"firmware", "embedded", "hardware", "fw"}
 
 ML_TYPES = {"ml", "machine-learning", "machine_learning", "data-science", "datascience", "ai"}
 
+APP_TYPES = {"app", "web", "mobile", "desktop", "saas"}
+
 ROLE_NAMES = {
     "pm": "PM Agent",
     "dev": "Dev Agent",
@@ -186,23 +188,76 @@ def parse_roles(raw: str | None, project_type: str, include_fw: bool, include_ml
     return list(dict.fromkeys(roles))
 
 
-def write_text(path: Path, content: str, force: bool) -> None:
-    if path.exists() and not force:
+def record_action(actions: list[dict] | None, action: str, path: Path) -> None:
+    if actions is not None:
+        actions.append({"action": action, "path": str(path)})
+
+
+def write_text(path: Path, content: str, force: bool, dry_run: bool = False, actions: list[dict] | None = None) -> None:
+    existed = path.exists()
+    if existed and not force:
+        record_action(actions, "skip", path)
+        return
+    if dry_run:
+        record_action(actions, "replace" if existed else "create", path)
         return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+    record_action(actions, "replaced" if existed else "created", path)
 
 
-def touch(path: Path) -> None:
+def touch(path: Path, dry_run: bool = False, actions: list[dict] | None = None) -> None:
+    if path.exists():
+        record_action(actions, "skip", path)
+        return
+    if dry_run:
+        record_action(actions, "create", path)
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.touch(exist_ok=True)
+    record_action(actions, "created", path)
 
 
-def profile_for(role: str) -> str:
+PROJECT_HARNESS_GUIDANCE = {
+    "pm": (
+        "- When Project Harness files exist, use `AGENTS.md`, `specs/project-spec.md`, "
+        "and `specs/acceptance-criteria.md` in planning and dispatch.\n"
+        "- Keep `team-loop/progress.md` updated after every loop iteration."
+    ),
+    "dev": (
+        "- When Project Harness files exist, default to `AGENTS.md` and "
+        "`specs/project-spec.md` before implementation."
+    ),
+    "test": (
+        "- When Project Harness files exist, default to `specs/acceptance-criteria.md` "
+        "as the acceptance/evidence contract."
+    ),
+    "review": (
+        "- When Project Harness files exist, check diffs against `AGENTS.md`, "
+        "`specs/project-spec.md`, and approval boundaries."
+    ),
+    "ux": (
+        "- When Project Harness files exist, align with user scenarios and "
+        "UX acceptance requirements in Project Harness files."
+    ),
+}
+
+
+def profile_for(role: str, include_project_harness: bool = False) -> str:
     name = ROLE_NAMES[role]
     skills = "\n".join(f"- {skill}" for skill in RECOMMENDED_SKILLS[role])
     refs = "\n".join(f"- {ref}" for ref in KNOWLEDGE_REFS[role])
     responsibilities = "\n".join(f"- {item}" for item in RESPONSIBILITIES[role])
+    project_harness_section = ""
+    if include_project_harness and role in PROJECT_HARNESS_GUIDANCE:
+        project_harness_section = dedent(
+            f"""\
+
+            ## Project Harness Defaults
+
+            {PROJECT_HARNESS_GUIDANCE[role]}
+            """
+        )
 
     return dedent(
         f"""\
@@ -227,6 +282,7 @@ def profile_for(role: str) -> str:
         ## Knowledge References
 
         {refs}
+        {project_harness_section}
 
         ## Message Contract
 
@@ -293,8 +349,14 @@ def protocol_file() -> str:
     )
 
 
-def progress_file(project_name: str, roles: list[str]) -> str:
+def progress_file(project_name: str, roles: list[str], include_project_harness: bool = False) -> str:
     role_list = "\n".join(f"- {ROLE_NAMES[role]}: planned" for role in roles)
+    next_action = "PM should create/register Agent threads after Dylan approval and update `agents.json`."
+    if include_project_harness:
+        next_action = (
+            "PM should run grill-me discovery Q&A with Dylan, fill Project Harness files, "
+            "then create/register Agent threads after Dylan approval."
+        )
     return dedent(
         f"""\
         # {project_name} Team Loop Progress
@@ -319,9 +381,232 @@ def progress_file(project_name: str, roles: list[str]) -> str:
 
         ## Next Action
 
-        PM should create/register Agent threads after Dylan approval and update `agents.json`.
+        {next_action}
         """
     )
+
+
+def project_harness_agents_file(project_name: str) -> str:
+    return dedent(
+        f"""\
+        # AGENTS.md
+
+        harness status: needs_grill_me_confirmation
+
+        ## Project Map
+
+        AGENTS.md is a concise project map for coding agents, not a full manual. Keep detailed product requirements in `specs/project-spec.md` and acceptance proof in `specs/acceptance-criteria.md`.
+
+        ## Grill-Me Discovery TODOs
+
+        PM must grill Dylan before treating this Project Harness as complete:
+
+        - Project goal: What does {project_name} do in one sentence?
+        - Users and scenarios:
+        - Tech stack and run commands:
+        - Repo/module map:
+        - Constraints and approval boundaries:
+        - Acceptance evidence:
+
+        ## Repository Outline
+
+        - Product code:
+        - Tests:
+        - Documentation:
+        - Scripts and tooling:
+        - Generated/local-only output:
+
+        ## Working Commands
+
+        ```bash
+        # Build:
+        # Test:
+        # Lint/format:
+        # Full local verification:
+        ```
+
+        ## Development Constraints
+
+        - Keep changes focused on the assigned task.
+        - Preserve user edits and read existing files before patching.
+        - Do not run destructive git commands unless explicitly requested.
+        - Ask before changing credentials, signing, entitlements, infrastructure, or security settings.
+        - Report verification commands and evidence before claiming completion.
+
+        ## Detailed References
+
+        - Product and delivery spec: `specs/project-spec.md`
+        - Acceptance criteria and evidence contract: `specs/acceptance-criteria.md`
+        """
+    )
+
+
+def project_harness_spec_file(project_name: str) -> str:
+    return dedent(
+        f"""\
+        # Project Spec
+
+        harness status: needs_grill_me_confirmation
+
+        ## Source Of Truth
+
+        This Project Harness spec is a pending placeholder until PM completes grill-me discovery Q&A with Dylan. PM must grill Dylan before treating these docs as complete.
+
+        The grill-me pass must confirm: project goal, users/scenarios, tech stack/run commands, repo/module map, constraints/approval boundaries, and acceptance evidence.
+
+        ## Project Goal
+
+        - Product name: {project_name}
+        - One-sentence purpose:
+        - Success definition:
+
+        ## Users And Scenarios
+
+        - Primary users:
+        - User problem:
+        - Core scenarios:
+
+        ## Version Scope
+
+        | Version | Scope | Must ship | Deferred |
+        | --- | --- | --- | --- |
+        | v0.1 |  |  |  |
+
+        ## Tech Stack And Run Commands
+
+        - Frameworks/runtimes:
+        - Package manager:
+        - Build:
+        - Test:
+        - Lint/format:
+        - Run locally:
+
+        ## Repo And Module Map
+
+        - Product code:
+        - Tests:
+        - Documentation:
+        - Scripts and tooling:
+        - Generated/local-only output:
+
+        ## Architecture And Data Flow
+
+        - Core mechanisms:
+        - Inputs:
+        - Processing:
+        - State and storage:
+        - Outputs:
+        - Integrations:
+        - Failure modes and recovery:
+
+        ## UX And Visual Style
+
+        - Product personality:
+        - User journeys:
+        - Navigation:
+        - Component style:
+        - Color, typography, imagery:
+        - Accessibility:
+
+        ## Constraints And Approval Boundaries
+
+        - Constraints:
+        - Security/privacy:
+        - What agents must not edit without approval:
+        - Human approval gates:
+        - Out of scope:
+
+        ## Acceptance Evidence
+
+        - Commands:
+        - Screenshots:
+        - Logs:
+        - Fixtures:
+        - Manual checks:
+        - Documented exceptions:
+
+        ## Open Questions
+
+        -
+        """
+    )
+
+
+def project_harness_acceptance_file() -> str:
+    return dedent(
+        """\
+        # Acceptance Criteria
+
+        harness status: needs_grill_me_confirmation
+
+        PM must grill Dylan before treating this acceptance contract as final. Align criteria with project goal, users/scenarios, tech stack/run commands, repo/module map, constraints/approval boundaries, and acceptance evidence.
+
+        Every item must be concrete. Quantitative requirements need numbers. Qualitative requirements need a repeatable judgment method. Completion requires evidence.
+
+        | ID | Requirement | Acceptance Method | Pass Threshold Or Judgment Method | Required Evidence | Status |
+        | --- | --- | --- | --- | --- | --- |
+        | AC-001 | PM completes discovery Q&A before implementation scope is treated as final | Review checklist | Dylan or PM confirms unanswered TODOs are resolved | Link to updated `specs/project-spec.md` and `AGENTS.md` diff | Pending |
+
+        ## Evidence Rules
+
+        - A command only counts if the agent reports exact command output.
+        - A screenshot only counts if the path and target state are named.
+        - A log only counts if the path and relevant event are named.
+        - A fixture or manual check only counts if the scenario and result are documented.
+        - A known limitation must be documented with impact and follow-up, not hidden.
+        """
+    )
+
+
+def append_gitignore_entry(project_path: Path, entry: str, dry_run: bool, actions: list[dict]) -> None:
+    path = project_path / ".gitignore"
+    current = path.read_text(encoding="utf-8") if path.exists() else ""
+    if entry in current.splitlines():
+        record_action(actions, "skip", path)
+        return
+    if dry_run:
+        record_action(actions, "append", path)
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        if current and not current.endswith("\n"):
+            handle.write("\n")
+        if current:
+            handle.write("\n")
+        handle.write(f"{entry}\n")
+    record_action(actions, "appended", path)
+
+
+def project_harness_files(project_name: str) -> dict[str, str]:
+    return {
+        "AGENTS.md": project_harness_agents_file(project_name),
+        "specs/project-spec.md": project_harness_spec_file(project_name),
+        "specs/acceptance-criteria.md": project_harness_acceptance_file(),
+        "specs/modules/.gitkeep": "",
+    }
+
+
+def write_project_harness(project_path: Path, project_name: str, force: bool, dry_run: bool) -> list[dict]:
+    actions: list[dict] = []
+    for relative, content in project_harness_files(project_name).items():
+        write_text(project_path / relative, content, force, dry_run, actions)
+    append_gitignore_entry(project_path, ".agent-runs/", dry_run, actions)
+    return actions
+
+
+def project_harness_summary(enabled: bool, dry_run: bool, actions: list[dict], suggested: bool = False) -> dict:
+    planned = sum(1 for item in actions if item["action"] in {"create", "replace", "append"})
+    written = sum(1 for item in actions if item["action"] in {"created", "replaced", "appended"})
+    skipped = sum(1 for item in actions if item["action"] == "skip")
+    return {
+        "enabled": enabled,
+        "suggested": suggested,
+        "mode": "dry-run" if dry_run else "write",
+        "planned": planned,
+        "written": written,
+        "skipped": skipped,
+        "actions": actions,
+    }
 
 
 def agents_json(project_name: str, project_path: Path, project_id: str, roles: list[str], created_at: str) -> dict:
@@ -375,31 +660,39 @@ def main() -> int:
     parser.add_argument("--roles", help="Comma-separated roles. Defaults to PM,Dev,Test,Version,Review,Research,UX.")
     parser.add_argument("--include-fw", action="store_true", help="Include FW Agent.")
     parser.add_argument("--include-ml", action="store_true", help="Include ML Agent.")
+    parser.add_argument("--include-project-harness", action="store_true", help="Create native Project Harness files: AGENTS.md and specs/.")
+    parser.add_argument("--include-app-harness", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--create-project-dir", action="store_true", help="Create project path if it does not exist.")
+    parser.add_argument("--dry-run", action="store_true", help="Show planned writes without creating files.")
     parser.add_argument("--force", action="store_true", help="Overwrite generated files.")
     args = parser.parse_args()
 
     project_path = Path(args.project_path).expanduser().resolve()
     if not project_path.exists():
-        if args.create_project_dir:
+        if args.create_project_dir and not args.dry_run:
             project_path.mkdir(parents=True)
+        elif args.create_project_dir and args.dry_run:
+            pass
         else:
             print(f"Project path does not exist: {project_path}", file=sys.stderr)
             return 2
 
-    if not project_path.is_dir():
+    if project_path.exists() and not project_path.is_dir():
         print(f"Project path is not a directory: {project_path}", file=sys.stderr)
         return 2
 
     roles = parse_roles(args.roles, args.project_type, args.include_fw, args.include_ml)
+    include_project_harness = args.include_project_harness or args.include_app_harness
     created_at = utc_now()
     team_dir = project_path / "team-loop"
+    actions: list[dict] = []
 
-    for directory in (team_dir / "agent-profiles", team_dir / "knowledge"):
-        directory.mkdir(parents=True, exist_ok=True)
+    if not args.dry_run:
+        for directory in (team_dir / "agent-profiles", team_dir / "knowledge"):
+            directory.mkdir(parents=True, exist_ok=True)
 
     for role in ROLES:
-        write_text(team_dir / "agent-profiles" / f"{role}.md", profile_for(role), args.force)
+        write_text(team_dir / "agent-profiles" / f"{role}.md", profile_for(role, include_project_harness), args.force, args.dry_run, actions)
 
     knowledge = {
         "architecture.md": "Architecture",
@@ -410,17 +703,39 @@ def main() -> int:
         "ml.md": "Machine Learning",
     }
     for filename, title in knowledge.items():
-        write_text(team_dir / "knowledge" / filename, knowledge_file(title), args.force)
+        write_text(team_dir / "knowledge" / filename, knowledge_file(title), args.force, args.dry_run, actions)
 
     for log_name in ("messages.ndjson", "commits.ndjson", "decisions.ndjson"):
-        touch(team_dir / log_name)
+        touch(team_dir / log_name, args.dry_run, actions)
 
     project_id = args.project_id or str(project_path)
-    write_text(team_dir / "agents.json", json.dumps(agents_json(args.project_name, project_path, project_id, roles, created_at), indent=2) + "\n", args.force)
-    write_text(team_dir / "progress.md", progress_file(args.project_name, roles), args.force)
-    write_text(team_dir / "protocol.md", protocol_file(), args.force)
+    write_text(team_dir / "agents.json", json.dumps(agents_json(args.project_name, project_path, project_id, roles, created_at), indent=2) + "\n", args.force, args.dry_run, actions)
+    write_text(team_dir / "progress.md", progress_file(args.project_name, roles, include_project_harness), args.force, args.dry_run, actions)
+    write_text(team_dir / "protocol.md", protocol_file(), args.force, args.dry_run, actions)
 
-    print(json.dumps({"teamLoopDir": str(team_dir), "roles": roles}, indent=2))
+    project_harness_actions = write_project_harness(project_path, args.project_name, args.force, args.dry_run) if include_project_harness else []
+    project_harness_suggested = (not include_project_harness) and args.project_type.lower() in APP_TYPES
+    next_action = "PM should create/register Agent threads after Dylan approval and update agents.json."
+    if include_project_harness:
+        next_action = "Run grill-me discovery Q&A with Dylan, then fill AGENTS.md and specs/ before implementation."
+    elif project_harness_suggested:
+        next_action = "This project type looks app-like; rerun with --include-project-harness to scaffold AGENTS.md and specs/."
+
+    harness_summary = project_harness_summary(include_project_harness, args.dry_run, project_harness_actions, project_harness_suggested)
+
+    print(
+        json.dumps(
+            {
+                "teamLoopDir": str(team_dir),
+                "roles": roles,
+                "dryRun": args.dry_run,
+                "actions": actions,
+                "projectHarness": harness_summary,
+                "nextAction": next_action,
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

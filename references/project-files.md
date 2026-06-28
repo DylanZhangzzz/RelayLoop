@@ -31,6 +31,22 @@ team-loop/
   protocol.md
 ```
 
+With `--include-project-harness`, the initializer also creates native Team Loop Project Harness files outside `team-loop/`:
+
+```text
+AGENTS.md
+specs/
+  project-spec.md
+  acceptance-criteria.md
+  modules/
+    .gitkeep
+.gitignore  # appends .agent-runs/ once
+```
+
+These files are portable built-in placeholders and native Team Loop project intent / role-contract files. PM must complete grill-me discovery Q&A with Dylan before treating `AGENTS.md` and `specs/` as final.
+
+Use `--dry-run` to preview planned writes/skips without creating files. Existing Project Harness files such as `AGENTS.md` and `specs/` are preserved unless `--force` is explicitly passed. When `--include-project-harness` is used, `.gitignore` may be safely appended with `.agent-runs/`; the entry is deduped and existing ignore content is preserved.
+
 ## agents.json
 
 Canonical registry for role threads:

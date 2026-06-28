@@ -83,6 +83,17 @@ team-loop/
   protocol.md
 ```
 
+For app repositories, optionally scaffold the native Team Loop Project Harness at initialization:
+
+```bash
+python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
+  --project-name "ExampleApp" \
+  --project-path /path/to/app \
+  --include-project-harness
+```
+
+This creates `AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`, `specs/modules/.gitkeep`, and a `.gitignore` entry for `.agent-runs/` outside `team-loop/`. These files are pending placeholders until PM completes grill-me discovery Q&A with Dylan. Project Harness turns project intent into role contracts: Dev reads the project map/spec, Test uses acceptance criteria as the evidence contract, Review checks diffs against boundaries, and UX aligns to user scenarios. Use `--dry-run` to preview planned writes and skips.
+
 Before creating worktree-backed Dev or Test Agents, check whether the repo has a valid git `HEAD`:
 
 ```bash
