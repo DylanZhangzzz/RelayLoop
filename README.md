@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/DylanZhangzzz/Dylan-Team-loop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
   <img src="https://img.shields.io/badge/status-Codex_first-2563eb?style=for-the-badge" alt="Codex first">
-  <img src="https://img.shields.io/badge/protocol-TEAMLOOP_MESSAGE_v1-059669?style=for-the-badge" alt="TEAMLOOP_MESSAGE v1">
+  <img src="https://img.shields.io/badge/protocol-RELAYLOOP_MESSAGE_v1-059669?style=for-the-badge" alt="RELAYLOOP_MESSAGE v1">
   <img src="https://img.shields.io/badge/workflow-PM_orchestrated-7c3aed?style=for-the-badge" alt="PM orchestrated">
 </p>
 
@@ -99,7 +99,7 @@ The GitHub npm CLI currently helps with approved local Markdown specialist impor
 
 ## Compatibility
 
-RelayLoop currently uses the project-local `team-loop/` directory and `TEAMLOOP_MESSAGE v1` envelope for storage/protocol compatibility. Those names are intentional legacy-compatible surfaces, not the product name.
+RelayLoop currently uses the project-local `team-loop/` directory for storage compatibility. `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
 
 ## Initialize A Project
 
@@ -159,7 +159,7 @@ and team-loop/agent-profiles/pm.md before acting.
 Wait for my project objective before dispatching work.
 ```
 
-Once Dylan approves a plan, the PM Agent defaults to routing `TEAMLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
+Once Dylan approves a plan, the PM Agent defaults to routing `RELAYLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
 
 ## Why RelayLoop
 
@@ -168,7 +168,7 @@ Once Dylan approves a plan, the PM Agent defaults to routing `TEAMLOOP_MESSAGE v
 | Generic frameworks feel heavy | Install one Codex skill and initialize one `team-loop/` harness inside an existing repo |
 | Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
 | One agent loses context over long work | PM keeps a living project dashboard in `team-loop/progress.md` |
-| Parallel Agents create chaos | Every dispatch uses `TEAMLOOP_MESSAGE v1` with required return fields |
+| Parallel Agents create chaos | Every dispatch uses `RELAYLOOP_MESSAGE v1` with required return fields |
 | Reviews happen too late | Review and Test Agents are part of the default loop |
 | Worktrees fail on empty repos | Preflight detects missing `HEAD` before worktree creation |
 | Automation can overreach | Admin boundaries require Dylan confirmation |
@@ -283,7 +283,7 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
 
 RelayLoop is the team operating system. [agency-agents](https://github.com/msitarzewski/agency-agents) can be an optional specialist talent pool.
 
-RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `TEAMLOOP_MESSAGE v1`, `team-loop/progress.md`, messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
+RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `RELAYLOOP_MESSAGE v1`, `team-loop/progress.md`, messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
 
 Optional specialist libraries such as agency-agents can provide expert profiles, for example Security Engineer, Backend Architect, UX Researcher, Technical Writer, Performance Engineer, or other domain roles. At the reviewed upstream source, the agency-agents README describes a collection of AI agent personalities and reports 232 specialized agents across 16 divisions. Its agent files are Markdown/profile-style definitions, and its Codex integration can generate standalone TOML custom-agent files for `~/.codex/agents/`.
 
@@ -312,14 +312,14 @@ relayloop specialists import \
   --license MIT
 ```
 
-The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Add `--write --approved-by Dylan` only after Dylan has approved the source/ref/license metadata. From a checkout, use `node bin/relayloop.js ...`; `teamloop` remains a legacy bin alias.
+The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Add `--write --approved-by Dylan` only after Dylan has approved the source/ref/license metadata. From a checkout, use `node bin/relayloop.js ...`.
 
-## TEAMLOOP_MESSAGE v1
+## RELAYLOOP_MESSAGE v1
 
 Every cross-Agent dispatch uses the same searchable envelope:
 
 ```text
-TEAMLOOP_MESSAGE v1
+RELAYLOOP_MESSAGE v1
 project: <project-name>
 mode: <task|goal|review>
 from_role: <pm|dev|test|version|review|research|ux|fw|ml>
@@ -345,12 +345,12 @@ Return Format:
 - Commands run
 - Risks/blockers
 - Next recommended action
-END_TEAMLOOP_MESSAGE
+END_RELAYLOOP_MESSAGE
 ```
 
 This makes Agent work auditable. Dispatches and response summaries go to `team-loop/messages.ndjson`; decisions go to `team-loop/decisions.ndjson`; version and commit events go to `team-loop/commits.ndjson`.
 
-`TEAMLOOP_MESSAGE v1` is retained as a compatibility protocol name while the product is RelayLoop.
+`RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token for RelayLoop.
 
 ## Safety Model
 
@@ -419,7 +419,6 @@ The method is designed to be portable, but only Codex support is documented as r
     openai.yaml
   bin/
     relayloop.js
-    teamloop.js
   references/
     protocol.md
     roles.md
@@ -429,9 +428,10 @@ The method is designed to be portable, but only Codex support is documented as r
   scripts/
     init_team_loop.py
     check_worktree_ready.py
-    log_teamloop_event.py
+    log_relayloop_event.py
   test/
-    teamloop.test.js
+    relayloop.test.js
+    test_init_team_loop.py
 ```
 
 ## Development From Source

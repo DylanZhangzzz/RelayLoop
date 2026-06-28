@@ -4,7 +4,7 @@
 
 RelayLoop is the team operating system: PM-led dispatch, project state, audit logs, approval gates, and Codex execution. Optional specialist libraries such as `agency-agents` can act as a specialist talent pool, but RelayLoop keeps ownership of coordination and state.
 
-This document describes the specialist adapter model. The current implementation is the RelayLoop CLI, with `bin/relayloop.js` as the preferred source checkout entrypoint and `teamloop` retained as a legacy bin alias. It imports approved local Markdown only and does not fetch remote content or run upstream scripts.
+This document describes the specialist adapter model. The current implementation is the RelayLoop CLI, with `bin/relayloop.js` as the source checkout entrypoint. It imports approved local Markdown only and does not fetch remote content or run upstream scripts.
 
 At the reviewed upstream source, `agency-agents` describes itself as a collection of AI agent personalities and specialist agents. Its README reports 232 specialized agents across 16 divisions, with Markdown/profile-style agent definitions and Codex integration docs that generate standalone TOML custom-agent files for `~/.codex/agents/`. RelayLoop may adapt reviewed profile content, but should not run third-party conversion or install scripts by default.
 
@@ -52,7 +52,7 @@ The proposed `team-loop/vendor/` area stores lock/source metadata only. It does 
   "workspaceMode": "readonly",
   "allowedModes": ["task", "goal", "review"],
   "profilePath": "team-loop/agent-profiles/specialists/security-engineer.md",
-  "requiresTeamLoopEnvelope": true,
+  "requiresRelayLoopEnvelope": true,
   "status": "available"
 }
 ```
@@ -64,7 +64,7 @@ The proposed `team-loop/vendor/` area stores lock/source metadata only. It does 
 
 ## RelayLoop Contract
 
-You are an optional Specialist Agent inside RelayLoop. Respond only to `TEAMLOOP_MESSAGE v1` tasks from PM. Return Summary, Files changed, Commands run, Risks/blockers, and Next recommended action. Default to read-only unless PM explicitly grants edit scope.
+You are an optional Specialist Agent inside RelayLoop. Respond only to `RELAYLOOP_MESSAGE v1` tasks from PM. Return Summary, Files changed, Commands run, Risks/blockers, and Next recommended action. Default to read-only unless PM explicitly grants edit scope.
 
 ## Source Metadata
 
@@ -88,7 +88,7 @@ Do not install dependencies, run external scripts, change files, or contact exte
 1. PM identifies a need for a specialist, such as security review, backend architecture, UX research, technical writing, or performance analysis.
 2. PM checks `team-loop/specialists.json` for an approved SpecialistProfile.
 3. If no approved specialist exists, PM asks Dylan before importing or adapting a third-party profile.
-4. PM dispatches a `TEAMLOOP_MESSAGE v1` task or review to the Specialist Agent.
+4. PM dispatches a `RELAYLOOP_MESSAGE v1` task or review to the Specialist Agent.
 5. The Specialist replies with the standard RelayLoop return fields.
 6. PM records the dispatch/result in `messages.ndjson`, updates `progress.md`, and routes any follow-up to Dev, Review, Test, UX, or Version.
 
@@ -122,7 +122,7 @@ Default mode is dry-run and writes no files. `--profile-file` must be a local `.
 - Treat shell scripts, converters, and installers as executable code requiring review before use.
 - Do not execute external scripts by default.
 - Specialists are read-only by default.
-- Specialists must respond through `TEAMLOOP_MESSAGE v1`.
+- Specialists must respond through `RELAYLOOP_MESSAGE v1`.
 - Branch deletion, branch merge, public history rewrite, formal release, and third-party skill installation remain Dylan-confirmation actions.
 
 ## Proposed Future CLI

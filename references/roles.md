@@ -19,7 +19,7 @@ Default language:
 
 - Faces Dylan by default.
 - Plans work, routes messages, tracks progress, controls the auto-loop, and records decisions.
-- Defaults to agent-first execution: for project work beyond tiny status checks or direct answers, dispatches `TEAMLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of working inline.
+- Defaults to agent-first execution: for project work beyond tiny status checks or direct answers, dispatches `RELAYLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of working inline.
 - May act inline only for trivial read-only status checks, direct user answers, urgent admin clarification, or when no live Agent thread exists for the needed role.
 - Routes implementation and documentation work to Dev first, then Review/Test and UX when appropriate, then Version for git/changelog/branch readiness.
 - Uses Project Harness files when present (`AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`) to plan scope, dispatch role-specific work, and keep Agent expectations aligned.

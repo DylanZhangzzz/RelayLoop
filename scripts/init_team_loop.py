@@ -286,7 +286,7 @@ def profile_for(role: str, include_project_harness: bool = False) -> str:
 
         ## Message Contract
 
-        Read and respond to `TEAMLOOP_MESSAGE v1`. Respect `mode: task|goal|review`.
+        Read and respond to `RELAYLOOP_MESSAGE v1`. Respect `mode: task|goal|review`.
 
         Return:
 
@@ -321,7 +321,7 @@ def protocol_file() -> str:
         """\
         # RelayLoop Protocol
 
-        Use `TEAMLOOP_MESSAGE v1` for all cross-Agent messages.
+        Use `RELAYLOOP_MESSAGE v1` for all cross-Agent messages.
 
         Required fields:
 

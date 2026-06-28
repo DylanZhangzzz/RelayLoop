@@ -7,7 +7,6 @@ const test = require("node:test");
 
 const repoRoot = path.resolve(__dirname, "..");
 const cliPath = path.join(repoRoot, "bin", "relayloop.js");
-const legacyCliPath = path.join(repoRoot, "bin", "teamloop.js");
 const pinnedRef = "0123456789abcdef0123456789abcdef01234567";
 
 function runCli(args, options = {}) {
@@ -18,18 +17,18 @@ function runCli(args, options = {}) {
   });
 }
 
-test("package metadata exposes relayloop with a legacy teamloop bin alias", () => {
+test("package metadata exposes only the relayloop bin", () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
 
   assert.equal(packageJson.name, "relayloop");
   assert.equal(packageJson.private, undefined);
-  assert.equal(packageJson.bin.relayloop, "bin/relayloop.js");
-  assert.equal(packageJson.bin.teamloop, "bin/teamloop.js");
+  assert.deepEqual(packageJson.bin, { relayloop: "bin/relayloop.js" });
   assert.match(packageJson.description, /RelayLoop/);
+  assert.equal(fs.existsSync(path.join(repoRoot, "bin", `team${"loop"}.js`)), false);
 });
 
 function makeWorkspace() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "teamloop-test-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "relayloop-test-"));
   const teamLoopDir = path.join(root, "team-loop");
   fs.mkdirSync(teamLoopDir, { recursive: true });
   const profileFile = path.join(root, "security.md");
@@ -127,13 +126,13 @@ test("specialists import --write creates specialists registry, wrapped profile, 
   assert.equal(registry.specialists[0].schema, "dylan-team-loop.specialist-profile.v1");
   assert.equal(registry.specialists[0].workspaceMode, "readonly");
   assert.deepEqual(registry.specialists[0].allowedModes, ["task", "goal", "review"]);
-  assert.equal(registry.specialists[0].requiresTeamLoopEnvelope, true);
+  assert.equal(registry.specialists[0].requiresRelayLoopEnvelope, true);
   assert.equal(registry.specialists[0].source.ref, pinnedRef);
   assert.match(registry.specialists[0].source.contentHash, /^[a-f0-9]{64}$/);
   assert.equal(registry.specialists[0].source.importedBy, "Dylan");
 
   const wrapped = fs.readFileSync(wrappedPath, "utf8");
-  assert.match(wrapped, /TEAMLOOP_MESSAGE v1/);
+  assert.match(wrapped, /RELAYLOOP_MESSAGE v1/);
   assert.match(wrapped, /Summary, Files changed, Commands run, Risks\/blockers, and Next recommended action/);
   assert.match(wrapped, /Review threat models and implementation risk/);
   assert.match(wrapped, /Do not install dependencies, run external scripts/);
@@ -219,13 +218,6 @@ test("help output explains local-only import safety", () => {
   assert.equal(rootHelp.status, 0, rootHelp.stderr);
   assert.match(rootHelp.stdout, /relayloop specialists import/);
   assert.match(rootHelp.stdout, /RelayLoop/);
-
-  const legacyHelp = spawnSync(process.execPath, [legacyCliPath, "--help"], {
-    cwd: repoRoot,
-    encoding: "utf8",
-  });
-  assert.equal(legacyHelp.status, 0, legacyHelp.stderr);
-  assert.match(legacyHelp.stdout, /relayloop specialists import/);
 
   const importHelp = runCli(["specialists", "import", "--help"]);
   assert.equal(importHelp.status, 0, importHelp.stderr);

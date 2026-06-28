@@ -8,8 +8,7 @@
     "url": "git+https://github.com/DylanZhangzzz/Dylan-Team-loop.git"
   },
   "bin": {
-    "relayloop": "bin/relayloop.js",
-    "teamloop": "bin/teamloop.js"
+    "relayloop": "bin/relayloop.js"
   },
   "scripts": {
     "test": "node --test"

@@ -7,9 +7,9 @@ description: PM-led multi-agent project orchestration for Codex. Use when Dylan 
 
 ## Overview
 
-Use this skill to initialize and run a PM-led multi-agent project loop. Dylan talks to the PM Agent; the PM Agent creates or registers role Agents, routes `TEAMLOOP_MESSAGE v1` tasks, records every dispatch/result, and runs automatic loops after Dylan approves the plan.
+Use this skill to initialize and run a PM-led multi-agent project loop. Dylan talks to the PM Agent; the PM Agent creates or registers role Agents, routes `RELAYLOOP_MESSAGE v1` tasks, records every dispatch/result, and runs automatic loops after Dylan approves the plan.
 
-Compatibility note: RelayLoop currently keeps the `dylan-team-loop` skill id, `team-loop/` project directory, and `TEAMLOOP_MESSAGE v1` envelope for existing Codex/project compatibility.
+Compatibility note: RelayLoop currently keeps the `dylan-team-loop` skill id and `team-loop/` project directory for existing Codex/project compatibility. `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
 
 ## Required References
 
@@ -56,7 +56,7 @@ Default workspace policy:
 
 ## PM Operating Loop
 
-PM defaults to agent-first execution. For project work beyond tiny status checks or direct answers, PM should dispatch `TEAMLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of doing the work inline.
+PM defaults to agent-first execution. For project work beyond tiny status checks or direct answers, PM should dispatch `RELAYLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of doing the work inline.
 
 PM may act inline only for:
 
@@ -84,7 +84,7 @@ Stop the auto-loop and ask Dylan when:
 
 ## Message Rules
 
-All cross-Agent messages must use `TEAMLOOP_MESSAGE v1` and include `mode: task|goal|review`.
+All cross-Agent messages must use `RELAYLOOP_MESSAGE v1` and include `mode: task|goal|review`.
 
 - Use `task` for one clear request with direct verification.
 - Use `goal` when the Agent should decompose a complex objective.
@@ -124,7 +124,7 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/check_worktree_ready.py \
 - Append logs:
 
 ```bash
-python3 ~/.codex/skills/dylan-team-loop/scripts/log_teamloop_event.py \
+python3 ~/.codex/skills/dylan-team-loop/scripts/log_relayloop_event.py \
   --team-loop-dir /path/to/project/team-loop \
   --event-type decision \
   --field actor=pm \

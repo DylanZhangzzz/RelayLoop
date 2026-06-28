@@ -5,7 +5,7 @@
 Every cross-Agent dispatch must use this searchable envelope:
 
 ```text
-TEAMLOOP_MESSAGE v1
+RELAYLOOP_MESSAGE v1
 project: <project-name>
 mode: <task|goal|review>
 from_role: <pm|dev|test|version|review|research|ux|fw|ml>
@@ -31,12 +31,12 @@ Return Format:
 - Commands run
 - Risks/blockers
 - Next recommended action
-END_TEAMLOOP_MESSAGE
+END_RELAYLOOP_MESSAGE
 ```
 
 Append the same payload or a normalized JSON representation to `team-loop/messages.ndjson`.
 
-Compatibility note: `TEAMLOOP_MESSAGE v1` and `team-loop/` are retained protocol/storage names for RelayLoop compatibility.
+Compatibility note: `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token. `team-loop/` is retained as the project-local storage directory for compatibility.
 
 ## Task Modes
 
@@ -60,7 +60,7 @@ Default route choices:
 
 ## Auto-Loop
 
-PM uses agent-first execution by default. For project work beyond tiny status checks or direct answers, PM dispatches `TEAMLOOP_MESSAGE v1` tasks to role Agents instead of performing the work inline.
+PM uses agent-first execution by default. For project work beyond tiny status checks or direct answers, PM dispatches `RELAYLOOP_MESSAGE v1` tasks to role Agents instead of performing the work inline.
 
 PM may act inline only for:
 

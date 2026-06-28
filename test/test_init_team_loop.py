@@ -10,7 +10,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 INIT_SCRIPT = REPO_ROOT / "scripts" / "init_team_loop.py"
 
 
-class InitTeamLoopProjectHarnessTests(unittest.TestCase):
+class RelayLoopProjectHarnessTests(unittest.TestCase):
     def run_init(self, project_path, *extra_args):
         return subprocess.run(
             [
@@ -93,6 +93,7 @@ class InitTeamLoopProjectHarnessTests(unittest.TestCase):
             self.assertIn("AGENTS.md", pm_profile)
             self.assertIn("specs/project-spec.md", pm_profile)
             self.assertIn("team-loop/progress.md", pm_profile)
+            self.assertIn("RELAYLOOP_MESSAGE v1", pm_profile)
             self.assertIn("AGENTS.md", dev_profile)
             self.assertIn("specs/project-spec.md", dev_profile)
             self.assertIn("specs/acceptance-criteria.md", test_profile)
@@ -101,6 +102,10 @@ class InitTeamLoopProjectHarnessTests(unittest.TestCase):
             self.assertIn("specs/project-spec.md", review_profile)
             self.assertIn("user scenarios", ux_profile)
             self.assertIn("UX acceptance requirements", ux_profile)
+
+            protocol = (project / "team-loop" / "protocol.md").read_text()
+            self.assertIn("RELAYLOOP_MESSAGE v1", protocol)
+            self.assertNotIn(f"TEAM{'LOOP'}_MESSAGE v1", protocol)
 
     def test_default_run_does_not_create_project_harness_files(self):
         with tempfile.TemporaryDirectory() as tmp:
