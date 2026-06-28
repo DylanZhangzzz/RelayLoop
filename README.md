@@ -29,8 +29,6 @@
 
 <p align="center">
   <img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
-  <br>
-  <sub>Concept visual: the PM-led loop is current; command labels in the image are workflow shorthand. Current CLI commands are documented below.</sub>
 </p>
 
 ## What Is RelayLoop?

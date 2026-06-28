@@ -12,8 +12,6 @@
 
 <p align="center">
   <img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
-  <br>
-  <sub>概念示意图：PM-led loop 是当前能力；图中的 command 标签是工作流速记，当前 CLI 以本文档说明为准。</sub>
 </p>
 
 ## RelayLoop 是什么？
