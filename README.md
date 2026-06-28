@@ -31,24 +31,24 @@
 
 RelayLoop is a **Codex-first PM-led relay layer for engineering agent teams**.
 
-It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: the project owner gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains `team-loop/progress.md` as the Project Progress File and active single source of truth; Agents return results; audit logs land in the repo; and the loop stops when human approval is required.
+It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: the User gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains the RelayLoop progress file (`team-loop/progress.md`) as the active single source of truth; Agents return results; audit logs land in the repo; and the loop stops when User approval is required.
 
 ```text
-Project owner
+User
   -> PM Agent
-     -> team-loop/progress.md  (living project dashboard)
+     -> RelayLoop progress file  (team-loop/progress.md)
      -> Dev
      -> Review + Test
      -> Dev repair loop
      -> Version
-  -> project owner
+  -> User
 ```
 
 Proof at a glance:
 
 - PM-led dispatch: PM assigns work to the right role Agent instead of letting a chat drift.
 - Proof-Gated Loop: every dispatch includes acceptance criteria and required proof before work can be called done.
-- `team-loop/progress.md`: the active source of truth for assignments, returns, blockers, approvals, and next action.
+- RelayLoop progress file (`team-loop/progress.md`): the active source of truth for assignments, returns, blockers, approvals, and next action.
 - Project Harness: `AGENTS.md` and `specs/` turn project intent into role contracts.
 - Audit logs and approval gates: messages, decisions, commits, and admin stops are repo-local.
 
@@ -88,7 +88,7 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --project-path /path/to/project
 ```
 
-This creates the project-local `team-loop/` workspace used by the PM Agent, role Agents, progress file, and audit logs.
+This creates the project-local RelayLoop workspace (`team-loop/`) used by the PM Agent, role Agents, progress file, and audit logs.
 
 ### Optional Specialist Import CLI
 
@@ -104,7 +104,14 @@ The GitHub npm CLI currently helps with approved local Markdown specialist impor
 
 ## Compatibility
 
-RelayLoop currently uses the project-local `team-loop/` directory for storage compatibility. `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
+RelayLoop currently stores project state in the project-local RelayLoop workspace (`team-loop/`) for compatibility. `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
+
+The product name is RelayLoop. For compatibility with the current Codex skill and existing projects, the repository still keeps these literal surfaces:
+
+- `~/.codex/skills/dylan-team-loop`
+- `team-loop/`
+- `dylan-team-loop.*` schemas
+- GitHub repository path `DylanZhangzzz/Dylan-Team-loop`
 
 ## Initialize A Project
 
@@ -139,7 +146,7 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
   --include-project-harness
 ```
 
-This creates `AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`, `specs/modules/.gitkeep`, and a `.gitignore` entry for `.agent-runs/` outside `team-loop/`. These files are pending placeholders until PM completes grill-me discovery Q&A with Dylan. Project Harness turns project intent into role contracts: Dev reads the project map/spec, Test uses acceptance criteria as the evidence contract, Review checks diffs against boundaries, and UX aligns to user scenarios. Use `--dry-run` to preview planned writes and skips.
+This creates `AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`, `specs/modules/.gitkeep`, and a `.gitignore` entry for `.agent-runs/` outside the RelayLoop workspace (`team-loop/`). These files are pending placeholders until PM completes grill-me discovery Q&A with the User. Project Harness turns project intent into role contracts: Dev reads the project map/spec, Test uses acceptance criteria as the evidence contract, Review checks diffs against boundaries, and UX aligns to user scenarios. Use `--dry-run` to preview planned writes and skips.
 
 Before creating worktree-backed Dev or Test Agents, check whether the repo has a valid git `HEAD`:
 
@@ -164,20 +171,20 @@ and team-loop/agent-profiles/pm.md before acting.
 Wait for my project objective before dispatching work.
 ```
 
-Once Dylan approves a plan, the PM Agent defaults to routing `RELAYLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
+Once the User approves a plan, the PM Agent defaults to routing `RELAYLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
 
 ## Why RelayLoop
 
 | Problem | RelayLoop answer |
 |---|---|
-| Generic frameworks feel heavy | Install one Codex skill and initialize one `team-loop/` harness inside an existing repo |
+| Generic frameworks feel heavy | Install one Codex skill and initialize one RelayLoop workspace (`team-loop/`) inside an existing repo |
 | Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
-| One agent loses context over long work | PM keeps a living project dashboard in `team-loop/progress.md` |
+| One agent loses context over long work | PM keeps a living project dashboard in the RelayLoop progress file (`team-loop/progress.md`) |
 | Parallel Agents create chaos | Every dispatch uses `RELAYLOOP_MESSAGE v1` with required return fields |
 | Agents self-report "done" without proof | PM defines acceptance; Test and Review verify evidence before approval |
 | Reviews happen too late | Review and Test Agents are part of the default loop |
 | Worktrees fail on empty repos | Preflight detects missing `HEAD` before worktree creation |
-| Automation can overreach | Admin boundaries require Dylan confirmation |
+| Automation can overreach | Admin boundaries require User confirmation |
 | Good prompts disappear in chat history | Role profiles and knowledge files live in the repo |
 
 ## What Makes It Different
@@ -192,7 +199,7 @@ AutoGen-style and crew-style systems often let Agents talk a lot while ownership
 
 ### PM-maintained project progress
 
-Unlike chat-only multi-agent setups, RelayLoop keeps a PM Agent-maintained Project Progress File. `team-loop/progress.md` is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs human approval, and what happens next. PM updates it after every loop iteration.
+Unlike chat-only multi-agent setups, RelayLoop keeps a PM Agent-maintained Project Progress File. The RelayLoop progress file (`team-loop/progress.md`) is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs User approval, and what happens next. PM updates it after every loop iteration.
 
 This is the active single source of truth for multi-agent work. It tracks:
 
@@ -200,7 +207,7 @@ This is the active single source of truth for multi-agent work. It tracks:
 - current loop iteration and limit;
 - each Agent's status;
 - recently dispatched tasks and returned results;
-- blockers, risks, and Dylan decision needs;
+- blockers, risks, and User decision needs;
 - next action.
 
 That makes the loop resilient to context drift and state loss.
@@ -222,7 +229,7 @@ For UI work, code inspection is not enough when the app can run locally. Accepta
 
 ### Repo-local memory
 
-The `team-loop/` directory is the durable spine:
+The RelayLoop workspace (`team-loop/`) is the durable spine:
 
 - `agents.json` records Agent threads, roles, workspace modes, and responsibilities.
 - `messages.ndjson` records dispatches and response summaries.
@@ -233,7 +240,11 @@ That makes the loop auditable, recoverable, and handoff-friendly in a way pure c
 
 ### Safety boundaries for real engineering
 
-The loop is intentionally not fully autonomous by default. Installing third-party skills, deleting or merging branches, rewriting public history, and making formal releases stop for Dylan approval. That makes it easier to trust the system on real repositories.
+The loop is intentionally not fully autonomous by default. Installing third-party skills, deleting or merging branches, rewriting public history, and making formal releases stop for User approval. That makes it easier to trust the system on real repositories.
+
+### User-in-the-loop by design
+
+RelayLoop keeps the User as the decision owner. Agents can plan, implement, test, review, and prepare versioning work, but the User remains responsible for scope, approval gates, admin actions, and final trust. PM records those decisions in the project-local progress and decision logs so automation stays accountable.
 
 ### Lightweight by default
 
@@ -243,7 +254,7 @@ No service, dashboard, database, or complex runtime is required. Install the ski
 
 ```mermaid
 flowchart LR
-    D["Dylan"] --> PM["PM Agent<br/>plan, route, accept"]
+    U["User"] --> PM["PM Agent<br/>plan, route, accept"]
     PM --> DEV["Dev Agent<br/>implement"]
     DEV --> PM
     PM --> REV["Review Agent<br/>risk + code review"]
@@ -253,13 +264,13 @@ flowchart LR
     PM -->|changes requested| DEV
     PM -->|approved| VER["Version Agent<br/>git + changelog readiness"]
     VER --> PM
-    PM --> D
+    PM --> U
 ```
 
-The PM Agent may loop automatically after Dylan approves the plan:
+The PM Agent may loop automatically after the User approves the plan:
 
 ```text
-Dylan objective
+User objective
 -> PM task breakdown + acceptance criteria
 -> Dev / UX / Research / Specialist execution
 -> Test actual acceptance with evidence
@@ -267,20 +278,20 @@ Dylan objective
 -> PM routes failures back to Dev
 -> repeat until accepted or stopped
 -> Version git scope / checks / push judgment
--> PM reports Dylan
+-> PM reports User
 ```
 
 For implementation and documentation tasks, PM sends the work to Dev first with `Task:` and `Acceptance:` sections, then uses Review/Test and UX when appropriate, then asks Version for git, changelog, branch readiness, and safe push checks.
 
-PM may act inline only for trivial read-only status checks, direct answers to Dylan, urgent admin clarification, or when no live Agent thread exists for the needed role.
+PM may act inline only for trivial read-only status checks, direct answers to the User, urgent admin clarification, or when no live Agent thread exists for the needed role.
 
-The loop stops for Dylan when requirements are unclear, credentials or hardware are missing, repeated failures do not converge, or an admin action is required.
+The loop stops for the User when requirements are unclear, credentials or hardware are missing, repeated failures do not converge, or an admin action is required.
 
 ## Roles
 
 | Agent | Default mode | Job |
 |---|---:|---|
-| PM | coordinator | Plans, routes, maintains project state, accepts work, reports to Dylan |
+| PM | coordinator | Plans, routes, maintains project state, accepts work, reports to the User |
 | Dev | worktree | Implements features, bug fixes, and scoped code changes |
 | Test | worktree | Designs tests, reproduces bugs, and verifies acceptance criteria |
 | Review | readonly | Reviews diffs, architecture risk, regression risk, and test quality |
@@ -308,7 +319,7 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
 
 RelayLoop is the team operating system. [agency-agents](https://github.com/msitarzewski/agency-agents) can be an optional specialist talent pool.
 
-RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `RELAYLOOP_MESSAGE v1`, `team-loop/progress.md`, messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
+RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `RELAYLOOP_MESSAGE v1`, the RelayLoop progress file (`team-loop/progress.md`), messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
 
 Optional specialist libraries such as agency-agents can provide expert profiles, for example Security Engineer, Backend Architect, UX Researcher, Technical Writer, Performance Engineer, or other domain roles. At the reviewed upstream source, the agency-agents README describes a collection of AI agent personalities and reports 232 specialized agents across 16 divisions. Its agent files are Markdown/profile-style definitions, and its Codex integration can generate standalone TOML custom-agent files for `~/.codex/agents/`.
 
@@ -322,7 +333,7 @@ This is different from framework-centered tools:
 | agency-agents | Optional role/profile library for specialist personas |
 | RelayLoop | PM-led project protocol, progress state, audit logs, and approval gates |
 
-Specialist import is available in the RelayLoop CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target `team-loop/` directory.
+Specialist import is available in the RelayLoop CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target RelayLoop workspace (`team-loop/`).
 
 ```bash
 relayloop specialists import \
@@ -337,7 +348,7 @@ relayloop specialists import \
   --license MIT
 ```
 
-The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Add `--write --approved-by Dylan` only after Dylan has approved the source/ref/license metadata. From a checkout, use `node bin/relayloop.js ...`.
+The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Use write mode only after the User has approved the source/ref/license metadata. From a checkout, use `node bin/relayloop.js ...`.
 
 ## RELAYLOOP_MESSAGE v1
 
@@ -377,7 +388,7 @@ Return Format:
 END_RELAYLOOP_MESSAGE
 ```
 
-This makes Agent work auditable. Dispatches and response summaries go to `team-loop/messages.ndjson`; decisions go to `team-loop/decisions.ndjson`; version and commit events go to `team-loop/commits.ndjson`.
+This makes Agent work auditable. Dispatches and response summaries go to the RelayLoop message log (`team-loop/messages.ndjson`); decisions go to the RelayLoop decision log (`team-loop/decisions.ndjson`); version and commit events go to the RelayLoop commit log (`team-loop/commits.ndjson`).
 
 `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token for RelayLoop.
 
@@ -398,7 +409,7 @@ Next recommended action:
 
 ## Safety Model
 
-The PM Agent may coordinate work and read Agent results after Dylan approves execution. It must stop for Dylan confirmation before:
+The PM Agent may coordinate work and read Agent results after the User approves execution. It must stop for User confirmation before:
 
 - installing third-party skills;
 - deleting or merging branches;
@@ -408,7 +419,7 @@ The PM Agent may coordinate work and read Agent results after Dylan approves exe
 
 Version Agent may create branches, commits, and changelog/version edits only after PM approval. It may decide to push committed changes when the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release.
 
-A push is distinct from a merge or release: safe committed-change pushes are Version Agent judgment calls after readiness checks, while branch deletion, branch merge, public history rewrites, formal releases, and third-party skill installs require Dylan confirmation.
+A push is distinct from a merge or release: safe committed-change pushes are Version Agent judgment calls after readiness checks, while branch deletion, branch merge, public history rewrites, formal releases, and third-party skill installs require User confirmation.
 
 ## Codex Support Today
 
@@ -432,7 +443,7 @@ The method is designed to be portable, but only Codex support is documented as r
 ## Recommended First Run
 
 1. Install the skill.
-2. Initialize `team-loop/` in a real project.
+2. Initialize the RelayLoop workspace (`team-loop/`) in a real project.
 3. Create an initial git commit if the project has none.
 4. Start a PM Agent thread in Codex.
 5. Ask the PM to propose a plan.
@@ -445,9 +456,9 @@ The method is designed to be portable, but only Codex support is documented as r
 | File | Purpose |
 |---|---|
 | `team-loop/agents.json` | Role registry, thread IDs, workspace modes, responsibilities |
-| `team-loop/progress.md` | PM-maintained project dashboard: state, loop iteration and limit, Agent status, recent dispatches/results, blockers, Dylan decision needs, next action |
+| `team-loop/progress.md` | PM-maintained project dashboard: state, loop iteration and limit, Agent status, recent dispatches/results, blockers, User decision needs, next action |
 | `team-loop/messages.ndjson` | Dispatches and response summaries |
-| `team-loop/decisions.ndjson` | Dylan approvals, PM approvals, scope changes, escalations |
+| `team-loop/decisions.ndjson` | User approvals, PM approvals, scope changes, escalations |
 | `team-loop/commits.ndjson` | Commit proposals, branch actions, changelog/version checks |
 | `team-loop/agent-profiles/*.md` | Role-specific operating instructions |
 | `team-loop/knowledge/*.md` | Project facts that Agents should reuse |
