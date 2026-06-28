@@ -58,6 +58,15 @@ Default route choices:
 
 ## Auto-Loop
 
+PM uses agent-first execution by default. For project work beyond tiny status checks or direct answers, PM dispatches `TEAMLOOP_MESSAGE v1` tasks to role Agents instead of performing the work inline.
+
+PM may act inline only for:
+
+- trivial read-only status checks;
+- direct answers to Dylan that do not require project edits or specialist review;
+- urgent admin clarification before safe routing is possible;
+- cases where no live Agent thread exists for the needed role.
+
 After Dylan approves a PM plan, PM may automatically run:
 
 ```text
@@ -82,6 +91,16 @@ planned
 -> versioning
 -> committed_or_ready
 -> reported
+```
+
+For implementation and documentation tasks, the expected default path is:
+
+```text
+PM -> Dev
+PM -> Review + Test (+ UX when product flow, UI, accessibility, or visual quality is affected)
+PM -> Dev repair loop if needed
+PM -> Version for git/changelog/branch readiness checks
+PM -> Dylan
 ```
 
 Default configuration:

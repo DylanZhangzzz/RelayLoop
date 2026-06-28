@@ -105,7 +105,7 @@ and team-loop/agent-profiles/pm.md before acting.
 Wait for my project objective before dispatching work.
 ```
 
-Once Dylan approves a plan, the PM Agent can route `TEAMLOOP_MESSAGE v1` tasks to the role Agents and update the project logs after each loop iteration.
+Once Dylan approves a plan, the PM Agent defaults to routing `TEAMLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
 
 ## Why Team Loop
 
@@ -175,6 +175,10 @@ PM -> Dev repair loop
 PM -> Version -> PM
 PM -> Dylan
 ```
+
+For implementation and documentation tasks, PM sends the work to Dev first, then uses Review/Test and UX when appropriate, then asks Version for git, changelog, and branch readiness checks.
+
+PM may act inline only for trivial read-only status checks, direct answers to Dylan, urgent admin clarification, or when no live Agent thread exists for the needed role.
 
 The loop stops for Dylan when requirements are unclear, credentials or hardware are missing, repeated failures do not converge, or an admin action is required.
 

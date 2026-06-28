@@ -54,13 +54,22 @@ Default workspace policy:
 
 ## PM Operating Loop
 
+PM defaults to agent-first execution. For project work beyond tiny status checks or direct answers, PM should dispatch `TEAMLOOP_MESSAGE v1` tasks to the appropriate role Agents instead of doing the work inline.
+
+PM may act inline only for:
+
+- trivial read-only status checks;
+- direct answers to Dylan that do not require project edits or specialist review;
+- urgent admin clarification before safe routing is possible;
+- cases where no live Agent thread exists for the needed role.
+
 After Dylan and PM agree on a plan and Dylan approves execution, PM may automatically loop without asking Dylan at every step:
 
-1. Send Dev a `mode: goal` or `mode: task` message.
-2. When Dev returns, send Review and Test parallel `mode: review` or `mode: task` messages.
-3. If Review or Test returns blocking feedback, summarize it and send it back to Dev.
-4. Repeat Dev -> Review/Test until both pass or a stop condition fires.
-5. Send Version a `mode: review` message for git/changelog/branch checks.
+1. Send Dev a `mode: goal` or `mode: task` message for implementation or documentation edits.
+2. When Dev returns, send Review and Test parallel `mode: review` or `mode: task` messages, and include UX when product flow, UI, accessibility, or visual quality is affected.
+3. If Review, Test, or UX returns blocking feedback, summarize it and send it back to Dev.
+4. Repeat Dev -> Review/Test/UX until required checks pass or a stop condition fires.
+5. Send Version a `mode: review` message for git/changelog/branch readiness checks.
 6. Execute PM-approved branch/commit/changelog actions only within the permission boundary.
 7. Report to Dylan in Chinese by default.
 
