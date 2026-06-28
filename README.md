@@ -27,7 +27,7 @@
 
 Dylan Team Loop is a **Codex-first PM-led engineering team harness**.
 
-It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: Dylan gives the PM Agent an objective; PM routes structured work to role Agents; PM maintains the project state in `team-loop/progress.md`; Agents return results; logs land in the repo; and the loop stops when human approval is required.
+It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: Dylan gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains `team-loop/progress.md` as the Project Progress File and active single source of truth; Agents return results; audit logs land in the repo; and the loop stops when human approval is required.
 
 ```text
 Dylan -> PM Agent -> Dev Agent -> Review Agent + Test Agent -> Dev repair loop -> Version Agent -> Dylan
@@ -133,7 +133,7 @@ AutoGen-style and crew-style systems often let Agents talk a lot while ownership
 
 ### PM-maintained project progress
 
-Unlike chat-only multi-agent setups, Dylan Team Loop keeps a PM-maintained project progress file. `team-loop/progress.md` is the living project dashboard: what is assigned, what came back, what is blocked, what needs human approval, and what happens next.
+Unlike chat-only multi-agent setups, Dylan Team Loop keeps a PM Agent-maintained Project Progress File. `team-loop/progress.md` is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs human approval, and what happens next. PM updates it after every loop iteration.
 
 This is the active single source of truth for multi-agent work. It tracks:
 
