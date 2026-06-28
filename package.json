@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DylanZhangzzz/Dylan-Team-loop.git"
+    "url": "git+https://github.com/DylanZhangzzz/RelayLoop.git"
   },
   "bin": {
     "relayloop": "bin/relayloop.js"

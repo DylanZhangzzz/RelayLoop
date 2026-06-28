@@ -34,7 +34,7 @@ RelayLoop 是一个 **Codex-first、PM-led 的多 Agent 工程协作层**。
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-git clone --depth 1 https://github.com/DylanZhangzzz/Dylan-Team-loop.git "$tmp"
+git clone --depth 1 https://github.com/DylanZhangzzz/RelayLoop.git "$tmp"
 mkdir -p ~/.codex/skills/dylan-team-loop
 rsync -a "$tmp"/ ~/.codex/skills/dylan-team-loop/
 ```
@@ -56,7 +56,7 @@ python3 ~/.codex/skills/dylan-team-loop/scripts/init_team_loop.py \
 当前 npm GitHub 安装主要用于本地 specialist profile 导入辅助，不会自动安装 Codex skill，也不会创建完整 PM-led workflow。
 
 ```bash
-npm install -g github:DylanZhangzzz/Dylan-Team-loop
+npm install -g github:DylanZhangzzz/RelayLoop
 relayloop --help
 relayloop specialists import --help
 ```
@@ -132,6 +132,6 @@ RELAYLOOP_MESSAGE v1
 - `~/.codex/skills/dylan-team-loop`
 - `team-loop/`
 - `dylan-team-loop.*` schema
-- GitHub 仓库路径 `DylanZhangzzz/Dylan-Team-loop`
+- GitHub 仓库路径 `DylanZhangzzz/RelayLoop`
 
 `RELAYLOOP_MESSAGE v1` 是当前 canonical v1 协议名。

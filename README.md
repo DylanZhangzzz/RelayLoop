@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/DylanZhangzzz/Dylan-Team-loop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
+  <a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
   <img src="https://img.shields.io/badge/status-Codex_first-2563eb?style=for-the-badge" alt="Codex first">
   <img src="https://img.shields.io/badge/protocol-RELAYLOOP_MESSAGE_v1-059669?style=for-the-badge" alt="RELAYLOOP_MESSAGE v1">
   <img src="https://img.shields.io/badge/workflow-PM_orchestrated-7c3aed?style=for-the-badge" alt="PM orchestrated">
@@ -64,7 +64,7 @@ Install the Codex skill first. This is the primary path for the PM-led workflow 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-git clone --depth 1 https://github.com/DylanZhangzzz/Dylan-Team-loop.git "$tmp"
+git clone --depth 1 https://github.com/DylanZhangzzz/RelayLoop.git "$tmp"
 mkdir -p ~/.codex/skills/dylan-team-loop
 rsync -a "$tmp"/ ~/.codex/skills/dylan-team-loop/
 ```
@@ -95,12 +95,12 @@ This creates the project-local RelayLoop workspace (`team-loop/`) used by the PM
 Install the RelayLoop CLI from the current GitHub repository when you want the `relayloop specialists import` helper:
 
 ```bash
-npm install -g github:DylanZhangzzz/Dylan-Team-loop
+npm install -g github:DylanZhangzzz/RelayLoop
 relayloop --help
 relayloop specialists import --help
 ```
 
-The GitHub npm CLI currently helps with approved local Markdown specialist imports. It does not install the Codex skill, create Codex Agent threads, or initialize the full PM-led workflow by itself. The GitHub repository path is still `DylanZhangzzz/Dylan-Team-loop`; the package and product name are RelayLoop. This is not an npm registry publication claim.
+The GitHub npm CLI currently helps with approved local Markdown specialist imports. It does not install the Codex skill, create Codex Agent threads, or initialize the full PM-led workflow by itself. The GitHub repository path is `DylanZhangzzz/RelayLoop`; the package and product name are RelayLoop. This is not an npm registry publication claim.
 
 ## Compatibility
 
@@ -111,7 +111,7 @@ The product name is RelayLoop. For compatibility with the current Codex skill an
 - `~/.codex/skills/dylan-team-loop`
 - `team-loop/`
 - `dylan-team-loop.*` schemas
-- GitHub repository path `DylanZhangzzz/Dylan-Team-loop`
+- GitHub repository path `DylanZhangzzz/RelayLoop`
 
 ## Initialize A Project
 
@@ -494,8 +494,8 @@ The method is designed to be portable, but only Codex support is documented as r
 Clone the repo, inspect the scripts, and install locally:
 
 ```bash
-git clone https://github.com/DylanZhangzzz/Dylan-Team-loop.git
-cd Dylan-Team-loop
+git clone https://github.com/DylanZhangzzz/RelayLoop.git
+cd RelayLoop
 
 npm test
 node bin/relayloop.js --help
