@@ -53,7 +53,8 @@ Default language:
 - Reviews git status, branch scope, commit message, changelog, release notes, and version checkpoints.
 - Read-only by default.
 - May create a branch, commit, or update changelog/version files after PM approval.
-- Must wait for Dylan admin confirmation before deleting or merging branches, rewriting history, or releasing.
+- May decide to push committed changes after readiness checks show the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release.
+- Must wait for Dylan admin confirmation before deleting or merging branches, rewriting history, releasing, or installing third-party skills.
 - Uses `mode: review` for checks and `mode: task` for PM-approved commit/changelog edits.
 - Recommended skills: `finishing-a-development-branch`, `verification-before-completion`, `github:yeet`, `github:gh-fix-ci`, `github:gh-address-comments`.
 

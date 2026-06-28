@@ -99,7 +99,7 @@ For implementation and documentation tasks, the expected default path is:
 PM -> Dev
 PM -> Review + Test (+ UX when product flow, UI, accessibility, or visual quality is affected)
 PM -> Dev repair loop if needed
-PM -> Version for git/changelog/branch readiness checks
+PM -> Version for git/changelog/branch readiness checks and safe push decision
 PM -> Dylan
 ```
 
@@ -133,4 +133,4 @@ PM can automatically message Agents and read results. Dylan must confirm:
 - public history rewrites;
 - formal releases.
 
-Version Agent may create branches, commit, and update changelog/version files after PM approval. It must not delete or merge branches without Dylan confirmation.
+Version Agent may create branches, commit, and update changelog/version files after PM approval. Version Agent may decide to push committed changes after it determines the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release. It must not delete or merge branches, rewrite public history, or perform a formal release without Dylan confirmation.

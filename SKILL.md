@@ -70,7 +70,7 @@ After Dylan and PM agree on a plan and Dylan approves execution, PM may automati
 3. If Review, Test, or UX returns blocking feedback, summarize it and send it back to Dev.
 4. Repeat Dev -> Review/Test/UX until required checks pass or a stop condition fires.
 5. Send Version a `mode: review` message for git/changelog/branch readiness checks.
-6. Execute PM-approved branch/commit/changelog actions only within the permission boundary.
+6. Let Version decide whether to push committed changes after it determines the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release.
 7. Report to Dylan in Chinese by default.
 
 Stop the auto-loop and ask Dylan when:
@@ -100,7 +100,7 @@ PM may automatically message Agents and read thread results. Dylan must confirm:
 - public history rewrites;
 - formal releases.
 
-Version Agent may create a new branch, commit, or update changelog/version files only after PM approval. Deleting or merging branches requires Dylan admin confirmation.
+Version Agent may create a new branch, commit, or update changelog/version files only after PM approval. Version Agent may decide to push committed changes after readiness checks confirm the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release. Deleting or merging branches, rewriting public history, formal releases, and third-party skill installation require Dylan confirmation.
 
 ## Scripts
 

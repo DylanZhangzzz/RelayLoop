@@ -176,7 +176,7 @@ PM -> Version -> PM
 PM -> Dylan
 ```
 
-For implementation and documentation tasks, PM sends the work to Dev first, then uses Review/Test and UX when appropriate, then asks Version for git, changelog, and branch readiness checks.
+For implementation and documentation tasks, PM sends the work to Dev first, then uses Review/Test and UX when appropriate, then asks Version for git, changelog, branch readiness, and safe push checks.
 
 PM may act inline only for trivial read-only status checks, direct answers to Dylan, urgent admin clarification, or when no live Agent thread exists for the needed role.
 
@@ -256,7 +256,9 @@ The PM Agent may coordinate work and read Agent results after Dylan approves exe
 - making a formal release;
 - continuing when credentials, hardware, or product decisions are missing.
 
-Version Agent may create branches, commits, and changelog/version edits only after PM approval. Branch deletion, branch merge, public history rewrites, and releases require Dylan confirmation.
+Version Agent may create branches, commits, and changelog/version edits only after PM approval. It may decide to push committed changes when the branch is clean, scope is intended, checks have passed, and the push is not a branch merge/delete, public history rewrite, or formal release.
+
+A push is distinct from a merge or release: safe committed-change pushes are Version Agent judgment calls after readiness checks, while branch deletion, branch merge, public history rewrites, formal releases, and third-party skill installs require Dylan confirmation.
 
 ## Codex Support Today
 
