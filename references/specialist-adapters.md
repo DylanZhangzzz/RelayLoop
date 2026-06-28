@@ -4,7 +4,7 @@
 
 Dylan Team Loop is the team operating system: PM-led dispatch, project state, audit logs, approval gates, and Codex execution. Optional specialist libraries such as `agency-agents` can act as a specialist talent pool, but Team Loop keeps ownership of coordination and state.
 
-This document describes a proposed adapter model only. No import implementation exists in the current scripts.
+This document describes the specialist adapter model. The current implementation is a local npm-style CLI entrypoint at `bin/teamloop.js`; it imports approved local Markdown only and does not fetch remote content or run upstream scripts.
 
 At the reviewed upstream source, `agency-agents` describes itself as a collection of AI agent personalities and specialist agents. Its README reports 232 specialized agents across 16 divisions, with Markdown/profile-style agent definitions and Codex integration docs that generate standalone TOML custom-agent files for `~/.codex/agents/`. Team Loop may adapt reviewed profile content, but should not run third-party conversion or install scripts by default.
 
@@ -37,12 +37,17 @@ The proposed `team-loop/vendor/` area stores lock/source metadata only. It does 
   "id": "security-engineer",
   "displayName": "Security Engineer",
   "source": {
+    "name": "agency-agents",
     "type": "github",
     "repository": "https://github.com/msitarzewski/agency-agents",
     "ref": "<pinned-commit-sha>",
     "path": "<source-profile-path>",
     "license": "MIT",
-    "scriptReview": "not-run"
+    "sourceFormat": "markdown",
+    "scriptReview": "not-run",
+    "contentHash": "<sha256>",
+    "importedAt": "<timestamp>",
+    "importedBy": "Dylan"
   },
   "workspaceMode": "readonly",
   "allowedModes": ["task", "goal", "review"],
@@ -86,6 +91,25 @@ Do not install dependencies, run external scripts, change files, or contact exte
 4. PM dispatches a `TEAMLOOP_MESSAGE v1` task or review to the Specialist Agent.
 5. The Specialist replies with the standard Team Loop return fields.
 6. PM records the dispatch/result in `messages.ndjson`, updates `progress.md`, and routes any follow-up to Dev, Review, Test, UX, or Version.
+
+## Local Import CLI
+
+Use the local checkout entrypoint; this is not documented as a published npm package:
+
+```bash
+node bin/teamloop.js specialists import \
+  --team-loop-dir /path/to/project/team-loop \
+  --profile-file /path/to/approved-profile.md \
+  --id security-engineer \
+  --display-name "Security Engineer" \
+  --source-name agency-agents \
+  --source-repo https://github.com/msitarzewski/agency-agents \
+  --source-ref 0123456789abcdef0123456789abcdef01234567 \
+  --source-path engineering/security-engineer.md \
+  --license MIT
+```
+
+Default mode is dry-run and writes no files. `--profile-file` must be a local `.md` or `.markdown` file. `--write` requires `--approved-by Dylan` exactly and a 40-character hexadecimal source ref. Duplicate specialist IDs and existing wrapped profile files fail unless `--force` is provided.
 
 ## Safety Gates
 

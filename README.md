@@ -244,7 +244,22 @@ This is different from framework-centered tools:
 | agency-agents | Optional role/profile library for specialist personas |
 | Dylan Team Loop | PM-led project protocol, progress state, audit logs, and approval gates |
 
-Specialist import is a proposed adapter path, not part of the current scripts. Future import/install work must stop for Dylan approval, use a pinned source/ref, include license and source metadata, distinguish non-executable Markdown profiles from executable shell scripts, and avoid executing external scripts by default. See `references/specialist-adapters.md` for the proposed architecture.
+Specialist import is available in the local development CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target `team-loop/` directory.
+
+```bash
+node bin/teamloop.js specialists import \
+  --team-loop-dir /path/to/project/team-loop \
+  --profile-file /path/to/approved-profile.md \
+  --id security-engineer \
+  --display-name "Security Engineer" \
+  --source-name agency-agents \
+  --source-repo https://github.com/msitarzewski/agency-agents \
+  --source-ref 0123456789abcdef0123456789abcdef01234567 \
+  --source-path engineering/security-engineer.md \
+  --license MIT
+```
+
+The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Add `--write --approved-by Dylan` only after Dylan has approved the source/ref/license metadata. This package is not currently documented as published to npm; use the local `node bin/teamloop.js ...` form from a checkout.
 
 ## TEAMLOOP_MESSAGE v1
 
@@ -344,8 +359,11 @@ The method is designed to be portable, but only Codex support is documented as r
 .
   SKILL.md
   README.md
+  package.json
   agents/
     openai.yaml
+  bin/
+    teamloop.js
   references/
     protocol.md
     roles.md
@@ -356,6 +374,8 @@ The method is designed to be portable, but only Codex support is documented as r
     init_team_loop.py
     check_worktree_ready.py
     log_teamloop_event.py
+  test/
+    teamloop.test.js
 ```
 
 ## Development From Source

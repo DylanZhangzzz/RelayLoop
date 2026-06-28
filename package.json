@@ -1,0 +1,13 @@
+{
+  "name": "dylan-team-loop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PM-led Team Loop CLI for local specialist profile imports.",
+  "bin": {
+    "teamloop": "bin/teamloop.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {}
+}
