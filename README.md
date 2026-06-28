@@ -1,9 +1,9 @@
 # Dylan Team Loop
 
 <p align="center">
-  <strong>PM-led multi-agent delivery loops for Codex</strong>
+  <strong>Codex-first PM-led engineering team harness</strong>
   <br>
-  Turn one project objective into routed Agent work, review loops, verification, git readiness, and a readable project memory.
+  Turn one project objective into routed Codex Agent work, review loops, verification, git readiness, and repo-local memory.
 </p>
 
 <p align="center">
@@ -16,6 +16,7 @@
 <p align="center">
   <a href="#quick-install">Quick Install</a> |
   <a href="#why-team-loop">Why Team Loop</a> |
+  <a href="#what-makes-it-different">Advantages</a> |
   <a href="#how-the-loop-runs">How It Runs</a> |
   <a href="#roles">Roles</a> |
   <a href="#safety-model">Safety</a>
@@ -23,15 +24,15 @@
 
 ## What Is Dylan Team Loop?
 
-Dylan Team Loop is a Codex skill for running a small AI delivery team around one PM Agent.
+Dylan Team Loop is a **Codex-first PM-led engineering team harness**.
 
-Instead of prompting a coding agent again and again, Dylan gives the PM Agent an objective. The PM Agent plans the work, routes structured tasks to role Agents, collects results, runs review and test loops, records decisions, and stops when human approval is required.
+It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: Dylan gives the PM Agent an objective; PM routes structured work to role Agents; Agents return results; logs land in the repo; and the loop stops when human approval is required.
 
 ```text
 Dylan -> PM Agent -> Dev Agent -> Review Agent + Test Agent -> Dev repair loop -> Version Agent -> Dylan
 ```
 
-It is built for projects where you want the speed of multiple Agents without losing the thread: who was assigned what, what changed, what passed, what is blocked, and when Dylan must decide.
+It is built for real engineering work where you want the speed of multiple Agents without losing the thread: who was assigned what, what changed, what passed, what is blocked, and when Dylan must decide.
 
 ## Quick Install
 
@@ -110,12 +111,43 @@ Once Dylan approves a plan, the PM Agent can route `TEAMLOOP_MESSAGE v1` tasks t
 
 | Problem | Team Loop answer |
 |---|---|
-| One agent loses context over long work | PM keeps durable state in `team-loop/` files |
-| Parallel Agents create chaos | Every task uses `TEAMLOOP_MESSAGE v1` with return fields |
+| Generic frameworks feel heavy | Install one Codex skill and initialize one `team-loop/` harness inside an existing repo |
+| Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
+| One agent loses context over long work | PM keeps durable repo-local state in `team-loop/` files |
+| Parallel Agents create chaos | Every dispatch uses `TEAMLOOP_MESSAGE v1` with required return fields |
 | Reviews happen too late | Review and Test Agents are part of the default loop |
 | Worktrees fail on empty repos | Preflight detects missing `HEAD` before worktree creation |
 | Automation can overreach | Admin boundaries require Dylan confirmation |
 | Good prompts disappear in chat history | Role profiles and knowledge files live in the repo |
+
+## What Makes It Different
+
+### Codex-first, not concept-first
+
+Many loop and multi-agent projects are powerful but abstract. Dylan Team Loop is designed to run directly in Codex Desktop with Codex threads: PM sends the task, the Agent replies, the PM logs the result, and the project state updates on disk.
+
+### PM-led, not agent chat
+
+AutoGen-style and crew-style systems often let Agents talk a lot while ownership gets fuzzy. Dylan Team Loop models a real small engineering team: PM plans and routes, Dev implements, Test verifies, Review audits, Version checks git/release readiness, Research investigates, and UX evaluates product flow.
+
+### Repo-local memory
+
+The `team-loop/` directory is the durable spine:
+
+- `agents.json` records Agent threads, roles, workspace modes, and responsibilities.
+- `messages.ndjson` records dispatches and response summaries.
+- `decisions.ndjson` records approvals, scope changes, and escalations.
+- `progress.md` gives humans the current state, blockers, and next action.
+
+That makes the loop auditable, recoverable, and handoff-friendly in a way pure chat history is not.
+
+### Safety boundaries for real engineering
+
+The loop is intentionally not fully autonomous by default. Installing third-party skills, deleting or merging branches, rewriting public history, and making formal releases stop for Dylan approval. That makes it easier to trust the system on real repositories.
+
+### Lightweight by default
+
+No service, dashboard, database, or complex runtime is required. Install the skill, initialize the harness, create/register Codex role threads, and run the loop inside the repo you already have.
 
 ## How The Loop Runs
 
