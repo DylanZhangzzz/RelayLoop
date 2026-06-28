@@ -27,6 +27,12 @@
   English | <a href="./README.zh-CN.md">简体中文</a>
 </p>
 
+<p align="center">
+  <img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
+  <br>
+  <sub>Concept visual: the PM-led loop is current; command labels in the image are workflow shorthand. Current CLI commands are documented below.</sub>
+</p>
+
 ## What Is RelayLoop?
 
 RelayLoop is a **Codex-first PM-led relay layer for engineering agent teams**.
@@ -507,4 +513,4 @@ rsync -a ./ ~/.codex/skills/relayloop/
 
 ## License
 
-Add a license file before publishing this as a reusable open-source package.
+RelayLoop is licensed under the Apache License 2.0. See [LICENSE](./LICENSE).

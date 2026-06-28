@@ -10,6 +10,12 @@
   <a href="./README.md">English</a> | 简体中文
 </p>
 
+<p align="center">
+  <img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
+  <br>
+  <sub>概念示意图：PM-led loop 是当前能力；图中的 command 标签是工作流速记，当前 CLI 以本文档说明为准。</sub>
+</p>
+
 ## RelayLoop 是什么？
 
 RelayLoop 是一个 **Codex-first、PM-led 的多 Agent 工程协作层**。
@@ -135,3 +141,7 @@ RelayLoop 当前统一使用 RelayLoop 命名。项目本地状态仍写入 Rela
 - GitHub 仓库路径 `DylanZhangzzz/RelayLoop`
 
 `RELAYLOOP_MESSAGE v1` 是当前 canonical v1 协议名。
+
+## 许可证
+
+RelayLoop 使用 Apache License 2.0。详见 [LICENSE](./LICENSE)。
