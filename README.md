@@ -455,17 +455,23 @@ The method is designed to be portable, but only Codex support is documented as r
 7. Let PM run Dev -> Review/Test -> Version.
 8. Read the final PM report and inspect the logs.
 
-## Project Files As Memory
+## RelayLoop Workspace Files
 
-| File | Purpose |
-|---|---|
-| `team-loop/agents.json` | Role registry, thread IDs, workspace modes, responsibilities |
-| `team-loop/progress.md` | PM-maintained project dashboard: state, loop iteration and limit, Agent status, recent dispatches/results, blockers, User decision needs, next action |
-| `team-loop/messages.ndjson` | Dispatches and response summaries |
-| `team-loop/decisions.ndjson` | User approvals, PM approvals, scope changes, escalations |
-| `team-loop/commits.ndjson` | Commit proposals, branch actions, changelog/version checks |
-| `team-loop/agent-profiles/*.md` | Role-specific operating instructions |
-| `team-loop/knowledge/*.md` | Project facts that Agents should reuse |
+The initializer currently creates the RelayLoop workspace at `team-loop/`. That
+directory name is the on-disk storage contract used by the code and tests.
+
+- `team-loop/agents.json` records the role registry, thread IDs, workspace
+  modes, and responsibilities.
+- `team-loop/progress.md` is the PM-maintained project dashboard: state, loop
+  iteration and limit, Agent status, recent dispatches/results, blockers, User
+  decision needs, and next action.
+- `team-loop/messages.ndjson` records dispatches and response summaries.
+- `team-loop/decisions.ndjson` records User approvals, PM approvals, scope
+  changes, and escalations.
+- `team-loop/commits.ndjson` records commit proposals, branch actions, and
+  changelog/version checks.
+- `team-loop/agent-profiles/*.md` stores role-specific operating instructions.
+- `team-loop/knowledge/*.md` stores project facts that Agents should reuse.
 
 ## Repository Layout
 

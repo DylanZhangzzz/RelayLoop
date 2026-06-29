@@ -131,7 +131,7 @@ RELAYLOOP_MESSAGE v1
 
 ## 当前路径
 
-RelayLoop 当前统一使用 RelayLoop 命名。项目本地状态仍写入 RelayLoop 工作区（`team-loop/`），协议名是 `RELAYLOOP_MESSAGE v1`：
+RelayLoop 当前统一使用 RelayLoop 命名。代码实际创建的项目本地工作区目录是 `team-loop/`；这是当前磁盘存储约定，不是旧产品名。协议名是 `RELAYLOOP_MESSAGE v1`：
 
 - `~/.codex/skills/relayloop`
 - `team-loop/`
