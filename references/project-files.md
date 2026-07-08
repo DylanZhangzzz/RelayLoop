@@ -2,10 +2,10 @@
 
 ## Directory
 
-`scripts/init_team_loop.py` creates:
+`scripts/init_relay_loop.py` creates:
 
 ```text
-team-loop/
+relay-loop/
   agent-profiles/
     pm.md
     dev.md
@@ -31,9 +31,9 @@ team-loop/
   protocol.md
 ```
 
-RelayLoop writes project-local state under `team-loop/` and uses `relayloop.*` schemas.
+RelayLoop writes project-local state under `relay-loop/` and uses `relayloop.*` schemas. If a project already contains a legacy `team-loop/` workspace, the initializer reuses it instead of creating a second workspace.
 
-With `--include-project-harness`, the initializer also creates native RelayLoop Project Harness files outside `team-loop/`:
+With `--include-project-harness`, the initializer also creates native RelayLoop Project Harness files outside `relay-loop/`:
 
 ```text
 AGENTS.md
@@ -83,9 +83,9 @@ Canonical registry for role threads:
       "hostId": null,
       "status": "planned",
       "workspaceMode": "worktree",
-      "profilePath": "team-loop/agent-profiles/dev.md",
+      "profilePath": "relay-loop/agent-profiles/dev.md",
       "recommendedSkills": ["test-driven-development"],
-      "knowledgeRefs": ["team-loop/knowledge/architecture.md"]
+      "knowledgeRefs": ["relay-loop/knowledge/architecture.md"]
     }
   ]
 }

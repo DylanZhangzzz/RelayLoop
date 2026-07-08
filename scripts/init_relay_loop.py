@@ -11,6 +11,10 @@ from pathlib import Path
 from textwrap import dedent
 
 
+DEFAULT_WORKSPACE_DIRNAME = "relay-loop"
+
+LEGACY_WORKSPACE_DIRNAME = "team-loop"
+
 ROLES = ("pm", "dev", "test", "version", "review", "research", "ux", "fw", "ml")
 
 DEFAULT_ROLES = ("pm", "dev", "test", "version", "review", "research", "ux")
@@ -125,43 +129,47 @@ RECOMMENDED_SKILLS = {
 
 KNOWLEDGE_REFS = {
     "pm": [
-        "team-loop/knowledge/architecture.md",
-        "team-loop/knowledge/build-and-test.md",
-        "team-loop/knowledge/release.md",
+        "knowledge/architecture.md",
+        "knowledge/build-and-test.md",
+        "knowledge/release.md",
     ],
     "dev": [
-        "team-loop/knowledge/architecture.md",
-        "team-loop/knowledge/build-and-test.md",
+        "knowledge/architecture.md",
+        "knowledge/build-and-test.md",
     ],
     "test": [
-        "team-loop/knowledge/build-and-test.md",
-        "team-loop/knowledge/architecture.md",
+        "knowledge/build-and-test.md",
+        "knowledge/architecture.md",
     ],
     "version": [
-        "team-loop/knowledge/release.md",
-        "team-loop/knowledge/build-and-test.md",
+        "knowledge/release.md",
+        "knowledge/build-and-test.md",
     ],
     "review": [
-        "team-loop/knowledge/architecture.md",
-        "team-loop/knowledge/build-and-test.md",
+        "knowledge/architecture.md",
+        "knowledge/build-and-test.md",
     ],
     "research": [
-        "team-loop/knowledge/architecture.md",
+        "knowledge/architecture.md",
     ],
     "ux": [
-        "team-loop/knowledge/design-system.md",
-        "team-loop/knowledge/architecture.md",
+        "knowledge/design-system.md",
+        "knowledge/architecture.md",
     ],
     "fw": [
-        "team-loop/knowledge/hardware.md",
-        "team-loop/knowledge/build-and-test.md",
+        "knowledge/hardware.md",
+        "knowledge/build-and-test.md",
     ],
     "ml": [
-        "team-loop/knowledge/ml.md",
-        "team-loop/knowledge/build-and-test.md",
-        "team-loop/knowledge/architecture.md",
+        "knowledge/ml.md",
+        "knowledge/build-and-test.md",
+        "knowledge/architecture.md",
     ],
 }
+
+
+def knowledge_refs_for(role: str, workspace_dirname: str) -> list[str]:
+    return [f"{workspace_dirname}/{ref}" for ref in KNOWLEDGE_REFS[role]]
 
 
 def utc_now() -> str:
@@ -222,7 +230,7 @@ PROJECT_HARNESS_GUIDANCE = {
     "pm": (
         "- When Project Harness files exist, use `AGENTS.md`, `specs/project-spec.md`, "
         "and `specs/acceptance-criteria.md` in planning and dispatch.\n"
-        "- Keep `team-loop/progress.md` updated after every loop iteration."
+        "- Keep `{workspace}/progress.md` updated after every loop iteration."
     ),
     "dev": (
         "- When Project Harness files exist, default to `AGENTS.md` and "
@@ -250,7 +258,7 @@ PROOF_GATED_GUIDANCE = {
         "- Acceptance must define the user-observable result, required commands or "
         "checks, required evidence files/pages/screenshots/logs, and how Test "
         "judges pass/fail.\n"
-        "- Keep `team-loop/progress.md` updated after every loop iteration."
+        "- Keep `{workspace}/progress.md` updated after every loop iteration."
     ),
     "dev": (
         "- Implement against the PM's Acceptance section, not only the Task text.\n"
@@ -277,22 +285,22 @@ PROOF_GATED_GUIDANCE = {
 }
 
 
-def profile_for(role: str, include_project_harness: bool = False) -> str:
+def profile_for(role: str, include_project_harness: bool = False, workspace_dirname: str = DEFAULT_WORKSPACE_DIRNAME) -> str:
     name = ROLE_NAMES[role]
     skills = "\n".join(f"- {skill}" for skill in RECOMMENDED_SKILLS[role])
-    refs = "\n".join(f"- {ref}" for ref in KNOWLEDGE_REFS[role])
+    refs = "\n".join(f"- {ref}" for ref in knowledge_refs_for(role, workspace_dirname))
     responsibilities = "\n".join(f"- {item}" for item in RESPONSIBILITIES[role])
     project_harness_section = ""
     if include_project_harness and role in PROJECT_HARNESS_GUIDANCE:
         project_harness_section = (
             "\n## Project Harness Defaults\n\n"
-            f"{PROJECT_HARNESS_GUIDANCE[role]}\n"
+            f"{PROJECT_HARNESS_GUIDANCE[role].format(workspace=workspace_dirname)}\n"
         )
     proof_gated_section = ""
     if role in PROOF_GATED_GUIDANCE:
         proof_gated_section = (
             "\n## Proof-Gated Loop\n\n"
-            f"{PROOF_GATED_GUIDANCE[role]}\n"
+            f"{PROOF_GATED_GUIDANCE[role].format(workspace=workspace_dirname)}\n"
         )
 
     return f"""# {name} Profile
@@ -664,7 +672,7 @@ def project_harness_summary(enabled: bool, dry_run: bool, actions: list[dict], s
     }
 
 
-def agents_json(project_name: str, project_path: Path, project_id: str, roles: list[str], created_at: str) -> dict:
+def agents_json(project_name: str, project_path: Path, project_id: str, roles: list[str], created_at: str, workspace_dirname: str = DEFAULT_WORKSPACE_DIRNAME) -> dict:
     return {
         "schema": "relayloop.agents.v1",
         "project": {
@@ -694,9 +702,9 @@ def agents_json(project_name: str, project_path: Path, project_id: str, roles: l
                 "hostId": None,
                 "status": "planned",
                 "workspaceMode": WORKSPACE_MODES[role],
-                "profilePath": f"team-loop/agent-profiles/{role}.md",
+                "profilePath": f"{workspace_dirname}/agent-profiles/{role}.md",
                 "recommendedSkills": RECOMMENDED_SKILLS[role],
-                "knowledgeRefs": KNOWLEDGE_REFS[role],
+                "knowledgeRefs": knowledge_refs_for(role, workspace_dirname),
                 "responsibilities": RESPONSIBILITIES[role],
                 "skillReviewRequired": True,
                 "lastContactAt": None,
@@ -739,15 +747,19 @@ def main() -> int:
     roles = parse_roles(args.roles, args.project_type, args.include_fw, args.include_ml)
     include_project_harness = args.include_project_harness or args.include_app_harness
     created_at = utc_now()
-    team_dir = project_path / "team-loop"
+    workspace_dir = project_path / DEFAULT_WORKSPACE_DIRNAME
+    legacy_dir = project_path / LEGACY_WORKSPACE_DIRNAME
+    if not workspace_dir.exists() and legacy_dir.is_dir():
+        workspace_dir = legacy_dir
+    workspace_dirname = workspace_dir.name
     actions: list[dict] = []
 
     if not args.dry_run:
-        for directory in (team_dir / "agent-profiles", team_dir / "knowledge"):
+        for directory in (workspace_dir / "agent-profiles", workspace_dir / "knowledge"):
             directory.mkdir(parents=True, exist_ok=True)
 
     for role in ROLES:
-        write_text(team_dir / "agent-profiles" / f"{role}.md", profile_for(role, include_project_harness), args.force, args.dry_run, actions)
+        write_text(workspace_dir / "agent-profiles" / f"{role}.md", profile_for(role, include_project_harness, workspace_dirname), args.force, args.dry_run, actions)
 
     knowledge = {
         "architecture.md": "Architecture",
@@ -758,15 +770,15 @@ def main() -> int:
         "ml.md": "Machine Learning",
     }
     for filename, title in knowledge.items():
-        write_text(team_dir / "knowledge" / filename, knowledge_file(title), args.force, args.dry_run, actions)
+        write_text(workspace_dir / "knowledge" / filename, knowledge_file(title), args.force, args.dry_run, actions)
 
     for log_name in ("messages.ndjson", "commits.ndjson", "decisions.ndjson"):
-        touch(team_dir / log_name, args.dry_run, actions)
+        touch(workspace_dir / log_name, args.dry_run, actions)
 
     project_id = args.project_id or str(project_path)
-    write_text(team_dir / "agents.json", json.dumps(agents_json(args.project_name, project_path, project_id, roles, created_at), indent=2) + "\n", args.force, args.dry_run, actions)
-    write_text(team_dir / "progress.md", progress_file(args.project_name, roles, include_project_harness), args.force, args.dry_run, actions)
-    write_text(team_dir / "protocol.md", protocol_file(), args.force, args.dry_run, actions)
+    write_text(workspace_dir / "agents.json", json.dumps(agents_json(args.project_name, project_path, project_id, roles, created_at, workspace_dirname), indent=2) + "\n", args.force, args.dry_run, actions)
+    write_text(workspace_dir / "progress.md", progress_file(args.project_name, roles, include_project_harness), args.force, args.dry_run, actions)
+    write_text(workspace_dir / "protocol.md", protocol_file(), args.force, args.dry_run, actions)
 
     project_harness_actions = write_project_harness(project_path, args.project_name, args.force, args.dry_run) if include_project_harness else []
     project_harness_suggested = (not include_project_harness) and args.project_type.lower() in APP_TYPES
@@ -781,7 +793,9 @@ def main() -> int:
     print(
         json.dumps(
             {
-                "teamLoopDir": str(team_dir),
+                "relayLoopDir": str(workspace_dir),
+                "workspaceDirname": workspace_dirname,
+                "legacyLayout": workspace_dirname == LEGACY_WORKSPACE_DIRNAME,
                 "roles": roles,
                 "dryRun": args.dry_run,
                 "actions": actions,

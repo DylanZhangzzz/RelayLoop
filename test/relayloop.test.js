@@ -27,10 +27,10 @@ test("package metadata exposes only the relayloop bin", () => {
   assert.equal(fs.existsSync(path.join(repoRoot, "bin", `team${"loop"}.js`)), false);
 });
 
-function makeWorkspace() {
+function makeWorkspace(workspaceDirname = "relay-loop") {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "relayloop-test-"));
-  const teamLoopDir = path.join(root, "team-loop");
-  fs.mkdirSync(teamLoopDir, { recursive: true });
+  const relayLoopDir = path.join(root, workspaceDirname);
+  fs.mkdirSync(relayLoopDir, { recursive: true });
   const profileFile = path.join(root, "security.md");
   fs.writeFileSync(
     profileFile,
@@ -45,15 +45,15 @@ function makeWorkspace() {
       "",
     ].join("\n"),
   );
-  return { root, teamLoopDir, profileFile };
+  return { root, relayLoopDir, profileFile };
 }
 
 function importArgs(workspace, extra = []) {
   return [
     "specialists",
     "import",
-    "--team-loop-dir",
-    workspace.teamLoopDir,
+    "--relay-loop-dir",
+    workspace.relayLoopDir,
     "--profile-file",
     workspace.profileFile,
     "--id",
@@ -91,12 +91,24 @@ test("specialists import dry-run prints a plan and writes no files", () => {
   const plan = JSON.parse(result.stdout);
   assert.equal(plan.dryRun, true);
   assert.equal(plan.specialist.id, "security-engineer");
-  assert.equal(fs.existsSync(path.join(workspace.teamLoopDir, "specialists.json")), false);
+  assert.equal(fs.existsSync(path.join(workspace.relayLoopDir, "specialists.json")), false);
   assert.equal(
-    fs.existsSync(path.join(workspace.teamLoopDir, "agent-profiles", "specialists", "security-engineer.md")),
+    fs.existsSync(path.join(workspace.relayLoopDir, "agent-profiles", "specialists", "security-engineer.md")),
     false,
   );
-  assert.equal(fs.existsSync(path.join(workspace.teamLoopDir, "vendor", "agency-agents.lock.json")), false);
+  assert.equal(fs.existsSync(path.join(workspace.relayLoopDir, "vendor", "agency-agents.lock.json")), false);
+});
+
+test("specialists import accepts --team-loop-dir as a deprecated alias for legacy workspaces", () => {
+  const workspace = makeWorkspace("team-loop");
+  const args = importArgs(workspace).map((value) => (value === "--relay-loop-dir" ? "--team-loop-dir" : value));
+
+  const result = runCli(args);
+
+  assert.equal(result.status, 0, result.stderr);
+  const plan = JSON.parse(result.stdout);
+  assert.equal(plan.dryRun, true);
+  assert.equal(plan.specialist.profilePath, "team-loop/agent-profiles/specialists/security-engineer.md");
 });
 
 test("specialists import dry-run does not require Dylan approval", () => {
@@ -116,9 +128,9 @@ test("specialists import --write creates specialists registry, wrapped profile, 
   const result = runCli(importArgs(workspace, ["--write"]));
 
   assert.equal(result.status, 0, result.stderr);
-  const registryPath = path.join(workspace.teamLoopDir, "specialists.json");
-  const wrappedPath = path.join(workspace.teamLoopDir, "agent-profiles", "specialists", "security-engineer.md");
-  const lockPath = path.join(workspace.teamLoopDir, "vendor", "agency-agents.lock.json");
+  const registryPath = path.join(workspace.relayLoopDir, "specialists.json");
+  const wrappedPath = path.join(workspace.relayLoopDir, "agent-profiles", "specialists", "security-engineer.md");
+  const lockPath = path.join(workspace.relayLoopDir, "vendor", "agency-agents.lock.json");
 
   const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
   assert.equal(registry.schema, "relayloop.specialists.v1");
@@ -130,6 +142,7 @@ test("specialists import --write creates specialists registry, wrapped profile, 
   assert.equal(registry.specialists[0].source.ref, pinnedRef);
   assert.match(registry.specialists[0].source.contentHash, /^[a-f0-9]{64}$/);
   assert.equal(registry.specialists[0].source.importedBy, "Dylan");
+  assert.equal(registry.specialists[0].profilePath, "relay-loop/agent-profiles/specialists/security-engineer.md");
 
   const wrapped = fs.readFileSync(wrappedPath, "utf8");
   assert.match(wrapped, /RELAYLOOP_MESSAGE v1/);
@@ -153,7 +166,7 @@ test("specialists import rejects non-Markdown profile files before write", () =>
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /--profile-file must end in .md or .markdown/i);
-  assert.equal(fs.existsSync(path.join(workspace.teamLoopDir, "specialists.json")), false);
+  assert.equal(fs.existsSync(path.join(workspace.relayLoopDir, "specialists.json")), false);
 });
 
 test("specialists import --write fails on duplicate id without --force", () => {
@@ -168,7 +181,7 @@ test("specialists import --write fails on duplicate id without --force", () => {
 
 test("specialists import --write fails when wrapped profile exists without registry entry and without --force", () => {
   const workspace = makeWorkspace();
-  const wrappedPath = path.join(workspace.teamLoopDir, "agent-profiles", "specialists", "security-engineer.md");
+  const wrappedPath = path.join(workspace.relayLoopDir, "agent-profiles", "specialists", "security-engineer.md");
   fs.mkdirSync(path.dirname(wrappedPath), { recursive: true });
   fs.writeFileSync(wrappedPath, "stale wrapped profile");
 
@@ -187,9 +200,9 @@ test("specialists import --write replaces duplicate id with --force", () => {
   const result = runCli(importArgs(workspace, ["--write", "--force"]));
 
   assert.equal(result.status, 0, result.stderr);
-  const wrappedPath = path.join(workspace.teamLoopDir, "agent-profiles", "specialists", "security-engineer.md");
+  const wrappedPath = path.join(workspace.relayLoopDir, "agent-profiles", "specialists", "security-engineer.md");
   assert.match(fs.readFileSync(wrappedPath, "utf8"), /Updated approved content/);
-  const registry = JSON.parse(fs.readFileSync(path.join(workspace.teamLoopDir, "specialists.json"), "utf8"));
+  const registry = JSON.parse(fs.readFileSync(path.join(workspace.relayLoopDir, "specialists.json"), "utf8"));
   assert.equal(registry.specialists.length, 1);
 });
 

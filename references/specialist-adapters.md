@@ -17,7 +17,7 @@ A `SpecialistProfile` is a normalized wrapper around a third-party persona. It r
 Proposed project layout:
 
 ```text
-team-loop/
+relay-loop/
   specialists.json
   agent-profiles/
     specialists/
@@ -27,7 +27,7 @@ team-loop/
     agency-agents.lock.json
 ```
 
-The proposed `team-loop/vendor/` area stores lock/source metadata only. It does not mean vendoring executable scripts or third-party code by default.
+The proposed `relay-loop/vendor/` area stores lock/source metadata only. It does not mean vendoring executable scripts or third-party code by default.
 
 ## Sample SpecialistProfile
 
@@ -51,7 +51,7 @@ The proposed `team-loop/vendor/` area stores lock/source metadata only. It does 
   },
   "workspaceMode": "readonly",
   "allowedModes": ["task", "goal", "review"],
-  "profilePath": "team-loop/agent-profiles/specialists/security-engineer.md",
+  "profilePath": "relay-loop/agent-profiles/specialists/security-engineer.md",
   "requiresRelayLoopEnvelope": true,
   "status": "available"
 }
@@ -86,7 +86,7 @@ Do not install dependencies, run external scripts, change files, or contact exte
 ## PM Dispatch Flow
 
 1. PM identifies a need for a specialist, such as security review, backend architecture, UX research, technical writing, or performance analysis.
-2. PM checks `team-loop/specialists.json` for an approved SpecialistProfile.
+2. PM checks `relay-loop/specialists.json` for an approved SpecialistProfile.
 3. If no approved specialist exists, PM asks Dylan before importing or adapting a third-party profile.
 4. PM dispatches a `RELAYLOOP_MESSAGE v1` task or review to the Specialist Agent.
 5. The Specialist replies with the standard RelayLoop return fields.
@@ -98,7 +98,7 @@ Use the installed CLI or the local checkout entrypoint:
 
 ```bash
 relayloop specialists import \
-  --team-loop-dir /path/to/project/team-loop \
+  --relay-loop-dir /path/to/project/relay-loop \
   --profile-file /path/to/approved-profile.md \
   --id security-engineer \
   --display-name "Security Engineer" \
@@ -111,7 +111,7 @@ relayloop specialists import \
 
 From a checkout, use `node bin/relayloop.js specialists import ...`.
 
-Default mode is dry-run and writes no files. `--profile-file` must be a local `.md` or `.markdown` file. `--write` requires `--approved-by Dylan` exactly and a 40-character hexadecimal source ref. Duplicate specialist IDs and existing wrapped profile files fail unless `--force` is provided.
+Default mode is dry-run and writes no files. `--team-loop-dir` is accepted as a deprecated alias of `--relay-loop-dir` for legacy workspaces. `--profile-file` must be a local `.md` or `.markdown` file. `--write` requires `--approved-by Dylan` exactly and a 40-character hexadecimal source ref. Duplicate specialist IDs and existing wrapped profile files fail unless `--force` is provided.
 
 ## Safety Gates
 

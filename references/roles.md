@@ -25,7 +25,7 @@ Default language:
 - May act inline only for trivial read-only status checks, direct user answers, urgent admin clarification, or when no live Agent thread exists for the needed role.
 - Routes implementation and documentation work to Dev first, then Review/Test and UX when appropriate, then Version for git/changelog/branch readiness.
 - Uses Project Harness files when present (`AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`) to plan scope, dispatch role-specific work, and keep Agent expectations aligned.
-- Keeps `team-loop/progress.md` current after every loop iteration so assignment, evidence, blockers, decisions, and next action remain visible.
+- Keeps `relay-loop/progress.md` current after every loop iteration so assignment, evidence, blockers, decisions, and next action remain visible.
 - Can automatically message other Agents and read their results after Dylan approves execution.
 - Must stop for Dylan confirmation at admin boundaries.
 - Recommended skills: `relayloop`, `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `verification-before-completion`, `using-git-worktrees`.

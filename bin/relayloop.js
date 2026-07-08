@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const REQUIRED_IMPORT_OPTIONS = [
-  "team-loop-dir",
+  "relay-loop-dir",
   "profile-file",
   "id",
   "display-name",
@@ -28,7 +28,8 @@ Usage:
 Commands:
   relayloop specialists import   Import approved local Markdown into RelayLoop.
 
-RelayLoop uses project-local \`team-loop/\` files for storage compatibility.`);
+RelayLoop stores project state in a project-local \`relay-loop/\` workspace.
+Legacy \`team-loop/\` workspaces remain supported via --team-loop-dir.`);
 }
 
 function printSpecialistsHelp() {
@@ -49,7 +50,7 @@ does not run upstream scripts, and does not install Codex agents.
 
 Usage:
   relayloop specialists import \\
-    --team-loop-dir <path> \\
+    --relay-loop-dir <path> \\
     --profile-file <local .md/.markdown path> \\
     --id <specialist-id> \\
     --display-name <name> \\
@@ -65,11 +66,12 @@ Options:
   --write              Write project-local RelayLoop files. Default is dry-run.
   --force              Replace an existing specialist with the same id.
   --approved-by Dylan  Required exactly for --write in v1.
+  --team-loop-dir      Deprecated alias of --relay-loop-dir for legacy workspaces.
 
 Writes only:
-  team-loop/specialists.json
-  team-loop/agent-profiles/specialists/<id>.md
-  team-loop/vendor/<source-name>.lock.json`);
+  relay-loop/specialists.json
+  relay-loop/agent-profiles/specialists/<id>.md
+  relay-loop/vendor/<source-name>.lock.json`);
 }
 
 function fail(message) {
@@ -187,7 +189,7 @@ Do not install dependencies, run external scripts, edit files, or contact extern
 `;
 }
 
-function buildSpecialist(options, profileContent, importedAt) {
+function buildSpecialist(options, profileContent, importedAt, workspaceDirname) {
   const sourceName = safeSourceName(options["source-name"]);
   const contentHash = crypto.createHash("sha256").update(profileContent).digest("hex");
   return {
@@ -209,21 +211,24 @@ function buildSpecialist(options, profileContent, importedAt) {
     },
     workspaceMode: "readonly",
     allowedModes: ["task", "goal", "review"],
-    profilePath: `team-loop/agent-profiles/specialists/${options.id}.md`,
+    profilePath: `${workspaceDirname}/agent-profiles/specialists/${options.id}.md`,
     requiresRelayLoopEnvelope: true,
     status: "available",
   };
 }
 
 function buildPlan(options) {
+  if (options["team-loop-dir"] && !options["relay-loop-dir"]) {
+    options["relay-loop-dir"] = options["team-loop-dir"];
+  }
   requireImportOptions(options);
   assertSafeId(options.id);
 
-  const teamLoopDir = path.resolve(options["team-loop-dir"]);
+  const relayLoopDir = path.resolve(options["relay-loop-dir"]);
   const profileFile = path.resolve(options["profile-file"]);
   assertMarkdownProfileFile(profileFile);
-  if (!fs.existsSync(teamLoopDir) || !fs.statSync(teamLoopDir).isDirectory()) {
-    throw new Error(`RelayLoop directory does not exist: ${teamLoopDir}`);
+  if (!fs.existsSync(relayLoopDir) || !fs.statSync(relayLoopDir).isDirectory()) {
+    throw new Error(`RelayLoop workspace directory does not exist: ${relayLoopDir}`);
   }
   if (!fs.existsSync(profileFile) || !fs.statSync(profileFile).isFile()) {
     throw new Error(`Profile file does not exist: ${profileFile}`);
@@ -237,10 +242,10 @@ function buildPlan(options) {
 
   const importedAt = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
   const profileContent = fs.readFileSync(profileFile, "utf8");
-  const specialist = buildSpecialist(options, profileContent, importedAt);
-  const registryPath = path.join(teamLoopDir, "specialists.json");
-  const wrappedProfilePath = path.join(teamLoopDir, "agent-profiles", "specialists", `${options.id}.md`);
-  const lockPath = path.join(teamLoopDir, "vendor", `${specialist.source.name}.lock.json`);
+  const specialist = buildSpecialist(options, profileContent, importedAt, path.basename(relayLoopDir));
+  const registryPath = path.join(relayLoopDir, "specialists.json");
+  const wrappedProfilePath = path.join(relayLoopDir, "agent-profiles", "specialists", `${options.id}.md`);
+  const lockPath = path.join(relayLoopDir, "vendor", `${specialist.source.name}.lock.json`);
   const registry = readJsonObject(registryPath, {
     schema: "relayloop.specialists.v1",
     specialists: [],

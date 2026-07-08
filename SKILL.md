@@ -9,7 +9,7 @@ description: PM-led multi-agent project orchestration for Codex. Use when Dylan 
 
 Use this skill to initialize and run a PM-led multi-agent project loop. Dylan talks to the PM Agent; the PM Agent creates or registers role Agents, routes `RELAYLOOP_MESSAGE v1` tasks, records every dispatch/result, and runs automatic loops after Dylan approves the plan.
 
-RelayLoop uses the `relayloop` skill id, the `RELAYLOOP_MESSAGE v1` protocol envelope, and the project-local RelayLoop workspace at `team-loop/`.
+RelayLoop uses the `relayloop` skill id, the `RELAYLOOP_MESSAGE v1` protocol envelope, and the project-local RelayLoop workspace at `relay-loop/`. Existing legacy `team-loop/` workspaces are detected and reused.
 
 ## Required References
 
@@ -17,7 +17,7 @@ Load only what is needed:
 
 - `references/protocol.md`: message envelope, task modes, auto-loop rules, and approval boundaries.
 - `references/roles.md`: default role profiles, worktree policy, and recommended skills.
-- `references/project-files.md`: `team-loop/` file schemas and logging rules.
+- `references/project-files.md`: `relay-loop/` file schemas and logging rules.
 - `references/agent-skill-recommendations.md`: candidate third-party skills and install review template.
 
 ## Initialization Workflow
@@ -32,13 +32,13 @@ Load only what is needed:
    - whether FW Agent is included for firmware/embedded/hardware work;
    - whether ML Agent is included for machine-learning, data-science, or AI work.
 3. Wait for Dylan approval.
-4. Run `scripts/init_team_loop.py` to create the project-local `team-loop/` workspace.
+4. Run `scripts/init_relay_loop.py` to create the project-local `relay-loop/` workspace.
 5. Use `codex_app.list_projects` before creating project-scoped Agent threads.
 6. Before creating any worktree-backed Agent, run `scripts/check_worktree_ready.py --project-path <project>`.
 7. Use `codex_app.create_thread` only after Dylan has approved initial Agent creation or a later new role.
    - If worktree preflight reports `readyForWorktree: false`, do not request a worktree-backed Agent yet. Either ask Dylan to create an initial commit or create that Agent in the local project environment until a valid HEAD exists.
    - If preflight reports a valid `branch`, use that branch only when it exists. Do not assume `main`.
-8. Write all returned thread IDs to `team-loop/agents.json`.
+8. Write all returned thread IDs to `relay-loop/agents.json`.
 9. Use `codex_app.set_thread_title` with the RelayLoop title convention:
    - PM thread: `<project> - PM Agent`, because it may be pinned outside the project group.
    - Other project-scoped Agent threads: `<Role> Agent`, for example `Dev Agent`, `Test Agent`, `Review Agent`. Do not prefix them with the project name when they already appear under that project in the Codex sidebar.
@@ -104,7 +104,7 @@ All cross-Agent messages must use `RELAYLOOP_MESSAGE v1` and include `mode: task
 - Include `Task:` and `Acceptance:` in every dispatch.
 - Require responses to include `Result: pass|fail|blocked` and `Evidence` when the Agent is validating, testing, reviewing, or accepting work.
 
-Append each sent message and response summary to `team-loop/messages.ndjson`. Update `team-loop/progress.md` after every loop iteration.
+Append each sent message and response summary to `relay-loop/messages.ndjson`. Update `relay-loop/progress.md` after every loop iteration.
 
 ## Permission Boundaries
 
@@ -123,7 +123,7 @@ Version Agent may create a new branch, commit, or update changelog/version files
 - Initialize a project workspace:
 
 ```bash
-python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name ExampleProject \
   --project-path /path/to/project
 ```
@@ -139,7 +139,7 @@ python3 ~/.codex/skills/relayloop/scripts/check_worktree_ready.py \
 
 ```bash
 python3 ~/.codex/skills/relayloop/scripts/log_relayloop_event.py \
-  --team-loop-dir /path/to/project/team-loop \
+  --relay-loop-dir /path/to/project/relay-loop \
   --event-type decision \
   --field actor=pm \
   --field summary="Dylan approved initial RelayLoop setup"
