@@ -53,15 +53,21 @@ def load_payload(raw: str | None) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Append a RelayLoop event.")
-    parser.add_argument("--team-loop-dir", required=True)
+    parser.add_argument(
+        "--relay-loop-dir",
+        "--team-loop-dir",
+        dest="relay_loop_dir",
+        required=True,
+        help="Path to the RelayLoop workspace. --team-loop-dir is a deprecated alias.",
+    )
     parser.add_argument("--event-type", required=True, choices=sorted(EVENT_FILES))
     parser.add_argument("--payload-json")
     parser.add_argument("--field", action="append", default=[], type=parse_field)
     args = parser.parse_args()
 
-    team_dir = Path(args.team_loop_dir).expanduser().resolve()
-    if not team_dir.is_dir():
-        print(f"RelayLoop directory does not exist: {team_dir}", file=sys.stderr)
+    workspace_dir = Path(args.relay_loop_dir).expanduser().resolve()
+    if not workspace_dir.is_dir():
+        print(f"RelayLoop workspace directory does not exist: {workspace_dir}", file=sys.stderr)
         return 2
 
     event = load_payload(args.payload_json)
@@ -81,7 +87,7 @@ def main() -> int:
         print(f"Missing required event fields: {', '.join(missing)}", file=sys.stderr)
         return 2
 
-    target = team_dir / EVENT_FILES[args.event_type]
+    target = workspace_dir / EVENT_FILES[args.event_type]
     with target.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
 

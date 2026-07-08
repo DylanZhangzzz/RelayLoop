@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-INIT_SCRIPT = REPO_ROOT / "scripts" / "init_team_loop.py"
+INIT_SCRIPT = REPO_ROOT / "scripts" / "init_relay_loop.py"
 
 
 class RelayLoopProjectHarnessTests(unittest.TestCase):
@@ -43,7 +43,7 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
             self.assertTrue(payload["projectHarness"]["enabled"])
             self.assertEqual(payload["projectHarness"]["mode"], "dry-run")
             self.assertGreater(payload["projectHarness"]["planned"], 0)
-            self.assertFalse((project / "team-loop").exists())
+            self.assertFalse((project / "relay-loop").exists())
             self.assertFalse((project / "AGENTS.md").exists())
             self.assertFalse((project / "specs").exists())
             self.assertFalse((project / ".gitignore").exists())
@@ -57,7 +57,7 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
 
             self.assertTrue(payload["projectHarness"]["enabled"])
             self.assertEqual(payload["projectHarness"]["mode"], "write")
-            self.assertTrue((project / "team-loop" / "progress.md").exists())
+            self.assertTrue((project / "relay-loop" / "progress.md").exists())
             self.assertIn("AGENTS.md is a concise project map", (project / "AGENTS.md").read_text())
             self.assertIn("harness status: needs_grill_me_confirmation", (project / "AGENTS.md").read_text())
             self.assertIn("PM must grill Dylan", (project / "specs" / "project-spec.md").read_text())
@@ -82,7 +82,7 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
             project = Path(tmp)
 
             self.parse_stdout_json(self.run_init(project, "--include-project-harness"))
-            profiles = project / "team-loop" / "agent-profiles"
+            profiles = project / "relay-loop" / "agent-profiles"
 
             pm_profile = (profiles / "pm.md").read_text()
             dev_profile = (profiles / "dev.md").read_text()
@@ -92,7 +92,7 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
 
             self.assertIn("AGENTS.md", pm_profile)
             self.assertIn("specs/project-spec.md", pm_profile)
-            self.assertIn("team-loop/progress.md", pm_profile)
+            self.assertIn("relay-loop/progress.md", pm_profile)
             self.assertIn("RELAYLOOP_MESSAGE v1", pm_profile)
             self.assertIn("Acceptance-First Dispatch", pm_profile)
             self.assertIn("Task and Acceptance", pm_profile)
@@ -108,7 +108,7 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
             self.assertIn("user scenarios", ux_profile)
             self.assertIn("UX acceptance requirements", ux_profile)
 
-            protocol = (project / "team-loop" / "protocol.md").read_text()
+            protocol = (project / "relay-loop" / "protocol.md").read_text()
             self.assertIn("RELAYLOOP_MESSAGE v1", protocol)
             self.assertIn("Proof-Gated Loop", protocol)
             self.assertIn("Acceptance-First Dispatch", protocol)
@@ -122,9 +122,35 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
             payload = self.parse_stdout_json(self.run_init(project))
 
             self.assertFalse(payload["projectHarness"]["enabled"])
-            self.assertTrue((project / "team-loop").exists())
+            self.assertTrue((project / "relay-loop").exists())
             self.assertFalse((project / "AGENTS.md").exists())
             self.assertFalse((project / "specs").exists())
+
+    def test_existing_legacy_team_loop_workspace_is_reused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            (project / "team-loop").mkdir()
+
+            payload = self.parse_stdout_json(self.run_init(project))
+
+            self.assertTrue(payload["legacyLayout"])
+            self.assertEqual(payload["workspaceDirname"], "team-loop")
+            self.assertTrue((project / "team-loop" / "progress.md").exists())
+            self.assertFalse((project / "relay-loop").exists())
+            agents_json = json.loads((project / "team-loop" / "agents.json").read_text())
+            self.assertEqual(agents_json["agents"][0]["profilePath"], "team-loop/agent-profiles/pm.md")
+
+    def test_fresh_project_uses_relay_loop_workspace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+
+            payload = self.parse_stdout_json(self.run_init(project))
+
+            self.assertFalse(payload["legacyLayout"])
+            self.assertEqual(payload["workspaceDirname"], "relay-loop")
+            agents_json = json.loads((project / "relay-loop" / "agents.json").read_text())
+            self.assertEqual(agents_json["agents"][0]["profilePath"], "relay-loop/agent-profiles/pm.md")
+            self.assertIn("relay-loop/knowledge/architecture.md", agents_json["agents"][0]["knowledgeRefs"])
 
     def test_existing_harness_files_are_preserved_without_force(self):
         with tempfile.TemporaryDirectory() as tmp:

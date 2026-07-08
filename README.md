@@ -1,46 +1,50 @@
+<div align="center">
+
 # RelayLoop
 
-<p align="center">
-  <strong>PM-led engineering loops for Codex agent teams</strong>
-  <br>
-  RelayLoop is the relay layer that turns one objective into dispatched Agent work, durable project state, review/test loops, and git readiness.
-</p>
+**PM-led engineering loops for Codex agent teams**
 
-<p align="center">
-  <a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
-  <img src="https://img.shields.io/badge/status-Codex_first-2563eb?style=for-the-badge" alt="Codex first">
-  <img src="https://img.shields.io/badge/protocol-RELAYLOOP_MESSAGE_v1-059669?style=for-the-badge" alt="RELAYLOOP_MESSAGE v1">
-  <img src="https://img.shields.io/badge/workflow-PM_orchestrated-7c3aed?style=for-the-badge" alt="PM orchestrated">
-</p>
+RelayLoop is the relay layer that turns one objective into dispatched Agent work,<br>
+durable project state, review/test loops, and git readiness.
 
-<p align="center">
-  <a href="#quick-install">Quick Install</a> |
-  <a href="#why-relayloop">Why RelayLoop</a> |
-  <a href="#what-makes-it-different">Advantages</a> |
-  <a href="#how-the-loop-runs">How It Runs</a> |
-  <a href="#roles">Roles</a> |
-  <a href="#bring-your-own-agents">Bring Your Own Agents</a> |
-  <a href="#safety-model">Safety</a>
-</p>
+<br>
 
-<p align="center">
-  English | <a href="./README.zh-CN.md">简体中文</a>
-</p>
+<a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
+<img src="https://img.shields.io/badge/status-Codex_first-2563eb?style=for-the-badge" alt="Codex first">
+<img src="https://img.shields.io/badge/protocol-RELAYLOOP__MESSAGE_v1-059669?style=for-the-badge" alt="RELAYLOOP_MESSAGE v1">
+<img src="https://img.shields.io/badge/workflow-PM_orchestrated-7c3aed?style=for-the-badge" alt="PM orchestrated">
+<img src="https://img.shields.io/badge/license-Apache_2.0-6b7280?style=for-the-badge" alt="Apache 2.0">
 
-<p align="center">
-  <img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
-</p>
+<br>
 
-## What Is RelayLoop?
+[Quick Install](#-quick-install) ·
+[Why RelayLoop](#-why-relayloop) ·
+[How It Runs](#-how-the-loop-runs) ·
+[Roles](#-roles) ·
+[Protocol](#-relayloop_message-v1) ·
+[Bring Your Own Agents](#-bring-your-own-agents) ·
+[Safety](#-safety-model)
 
-RelayLoop is a **Codex-first PM-led relay layer for engineering agent teams**.
+English | [简体中文](./README.zh-CN.md)
 
-It is not a generic agent framework and not an agent group chat. It is a lightweight repo-local operating system for Codex Desktop and Codex threads: the User gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains the RelayLoop progress file (`team-loop/progress.md`) as the active single source of truth; Agents return results; audit logs land in the repo; and the loop stops when User approval is required.
+<br>
+
+<img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
+
+</div>
+
+---
+
+## 🚀 What Is RelayLoop?
+
+RelayLoop is a **Codex-first, PM-led relay layer for engineering agent teams**.
+
+It is not a generic agent framework and not an agent group chat. It is a lightweight, repo-local operating system for Codex Desktop and Codex threads: the User gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains the RelayLoop progress file (`relay-loop/progress.md`) as the active single source of truth; Agents return results with evidence; audit logs land in the repo; and the loop stops whenever User approval is required.
 
 ```text
 User
   -> PM Agent
-     -> RelayLoop progress file  (team-loop/progress.md)
+     -> RelayLoop progress file  (relay-loop/progress.md)
      -> Dev
      -> Review + Test
      -> Dev repair loop
@@ -48,17 +52,17 @@ User
   -> User
 ```
 
-Proof at a glance:
+**At a glance:**
 
-- PM-led dispatch: PM assigns work to the right role Agent instead of letting a chat drift.
-- Proof-Gated Loop: every dispatch includes acceptance criteria and required proof before work can be called done.
-- RelayLoop progress file (`team-loop/progress.md`): the active source of truth for assignments, returns, blockers, approvals, and next action.
-- Project Harness: `AGENTS.md` and `specs/` turn project intent into role contracts.
-- Audit logs and approval gates: messages, decisions, commits, and admin stops are repo-local.
+- 🎯 **PM-led dispatch** — PM assigns work to the right role Agent instead of letting a chat drift.
+- 🔒 **Proof-Gated Loop** — every dispatch includes acceptance criteria and required proof before work can be called done.
+- 📋 **RelayLoop progress file** (`relay-loop/progress.md`) — the active source of truth for assignments, returns, blockers, approvals, and next action.
+- 🧭 **Project Harness** — `AGENTS.md` and `specs/` turn project intent into role contracts.
+- 🧾 **Audit logs and approval gates** — messages, decisions, commits, and admin stops are repo-local.
 
 It is built for real engineering work where you want the speed of multiple Agents without losing the thread: who was assigned what, what changed, what passed, what is blocked, and when a human decision is needed.
 
-## Quick Install
+## 📦 Quick Install
 
 ### Codex Skill + Project Init
 
@@ -87,12 +91,12 @@ Then restart Codex or start a fresh Codex thread so the skill is discovered.
 Initialize a project with the Python initializer:
 
 ```bash
-python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name "ExampleProject" \
   --project-path /path/to/project
 ```
 
-This creates the project-local RelayLoop workspace (`team-loop/`) used by the PM Agent, role Agents, progress file, and audit logs.
+This creates the project-local RelayLoop workspace (`relay-loop/`) used by the PM Agent, role Agents, progress file, and audit logs.
 
 ### Optional Specialist Import CLI
 
@@ -106,23 +110,12 @@ relayloop specialists import --help
 
 The GitHub npm CLI currently helps with approved local Markdown specialist imports. It does not install the Codex skill, create Codex Agent threads, or initialize the full PM-led workflow by itself. The GitHub repository path is `DylanZhangzzz/RelayLoop`; the package and product name are RelayLoop. This is not an npm registry publication claim.
 
-## Current Paths
-
-RelayLoop stores project state in the project-local RelayLoop workspace (`team-loop/`). `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol envelope.
-
-The product, skill, CLI, and schema namespace use RelayLoop naming:
-
-- `~/.codex/skills/relayloop`
-- `team-loop/`
-- `relayloop.*` schemas
-- GitHub repository path `DylanZhangzzz/RelayLoop`
-
-## Initialize A Project
+## 🛠 Initialize A Project
 
 Create or recreate the project-local RelayLoop workspace:
 
 ```bash
-python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name "ExampleProject" \
   --project-path /path/to/project
 ```
@@ -130,7 +123,7 @@ python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
 This creates:
 
 ```text
-team-loop/
+relay-loop/
   agent-profiles/
   knowledge/
   agents.json
@@ -144,13 +137,13 @@ team-loop/
 For app repositories, optionally scaffold the native RelayLoop Project Harness at initialization:
 
 ```bash
-python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name "ExampleApp" \
   --project-path /path/to/app \
   --include-project-harness
 ```
 
-This creates `AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`, `specs/modules/.gitkeep`, and a `.gitignore` entry for `.agent-runs/` outside the RelayLoop workspace (`team-loop/`). These files are pending placeholders until PM completes grill-me discovery Q&A with the User. Project Harness turns project intent into role contracts: Dev reads the project map/spec, Test uses acceptance criteria as the evidence contract, Review checks diffs against boundaries, and UX aligns to user scenarios. Use `--dry-run` to preview planned writes and skips.
+This creates `AGENTS.md`, `specs/project-spec.md`, `specs/acceptance-criteria.md`, `specs/modules/.gitkeep`, and a `.gitignore` entry for `.agent-runs/` outside the RelayLoop workspace (`relay-loop/`). These files are pending placeholders until PM completes grill-me discovery Q&A with the User. Project Harness turns project intent into role contracts: Dev reads the project map/spec, Test uses acceptance criteria as the evidence contract, Review checks diffs against boundaries, and UX aligns to user scenarios. Use `--dry-run` to preview planned writes and skips.
 
 Before creating worktree-backed Dev or Test Agents, check whether the repo has a valid git `HEAD`:
 
@@ -161,7 +154,10 @@ python3 ~/.codex/skills/relayloop/scripts/check_worktree_ready.py \
 
 If `readyForWorktree` is `false`, create an initial commit first or run Agents in the local project environment until a valid `HEAD` exists.
 
-## Start The PM Agent In Codex
+> [!NOTE]
+> **Migrating from `team-loop/`?** Earlier versions stored the workspace at `team-loop/`. The initializer detects and reuses an existing legacy `team-loop/` workspace instead of creating a second one, and the CLI accepts `--team-loop-dir` as a deprecated alias of `--relay-loop-dir`. New projects always get `relay-loop/`.
+
+## ▶️ Start The PM Agent In Codex
 
 Open Codex in the target project and ask:
 
@@ -169,21 +165,21 @@ Open Codex in the target project and ask:
 Use the relayloop skill.
 
 You are the PM Agent for this project.
-Read team-loop/protocol.md, team-loop/agents.json, team-loop/progress.md,
-and team-loop/agent-profiles/pm.md before acting.
+Read relay-loop/protocol.md, relay-loop/agents.json, relay-loop/progress.md,
+and relay-loop/agent-profiles/pm.md before acting.
 
 Wait for my project objective before dispatching work.
 ```
 
 Once the User approves a plan, the PM Agent defaults to routing `RELAYLOOP_MESSAGE v1` tasks to the role Agents and updating the project logs after each loop iteration. PM should not do implementation or documentation work inline when an appropriate live Agent thread exists.
 
-## Why RelayLoop
+## 💡 Why RelayLoop
 
 | Problem | RelayLoop answer |
 |---|---|
-| Generic frameworks feel heavy | Install one Codex skill and initialize one RelayLoop workspace (`team-loop/`) inside an existing repo |
+| Generic frameworks feel heavy | Install one Codex skill and initialize one RelayLoop workspace (`relay-loop/`) inside an existing repo |
 | Agent group chats blur responsibility | PM, Dev, Test, Review, Version, Research, and UX have explicit lanes |
-| One agent loses context over long work | PM keeps a living project dashboard in the RelayLoop progress file (`team-loop/progress.md`) |
+| One agent loses context over long work | PM keeps a living project dashboard in the RelayLoop progress file (`relay-loop/progress.md`) |
 | Parallel Agents create chaos | Every dispatch uses `RELAYLOOP_MESSAGE v1` with required return fields |
 | Agents self-report "done" without proof | PM defines acceptance; Test and Review verify evidence before approval |
 | Reviews happen too late | Review and Test Agents are part of the default loop |
@@ -191,7 +187,7 @@ Once the User approves a plan, the PM Agent defaults to routing `RELAYLOOP_MESSA
 | Automation can overreach | Admin boundaries require User confirmation |
 | Good prompts disappear in chat history | Role profiles and knowledge files live in the repo |
 
-## What Makes It Different
+## ✨ What Makes It Different
 
 ### Codex-first, not concept-first
 
@@ -203,9 +199,9 @@ AutoGen-style and crew-style systems often let Agents talk a lot while ownership
 
 ### PM-maintained project progress
 
-Unlike chat-only multi-agent setups, RelayLoop keeps a PM Agent-maintained Project Progress File. The RelayLoop progress file (`team-loop/progress.md`) is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs User approval, and what happens next. PM updates it after every loop iteration.
+Unlike chat-only multi-agent setups, RelayLoop keeps a PM Agent-maintained Project Progress File. The RelayLoop progress file (`relay-loop/progress.md`) is the living project dashboard and active single source of truth: what is assigned, what came back, what is blocked, what needs User approval, and what happens next. PM updates it after every loop iteration.
 
-This is the active single source of truth for multi-agent work. It tracks:
+It tracks:
 
 - current state: `planned`, `assigned_dev`, `review_testing`, `changes_requested`, `approved`, `versioning`, `reported`;
 - current loop iteration and limit;
@@ -233,7 +229,7 @@ For UI work, code inspection is not enough when the app can run locally. Accepta
 
 ### Repo-local memory
 
-The RelayLoop workspace (`team-loop/`) is the durable spine:
+The RelayLoop workspace (`relay-loop/`) is the durable spine:
 
 - `agents.json` records Agent threads, roles, workspace modes, and responsibilities.
 - `messages.ndjson` records dispatches and response summaries.
@@ -254,7 +250,7 @@ RelayLoop keeps the User as the decision owner. Agents can plan, implement, test
 
 No service, dashboard, database, or complex runtime is required. Install the skill, initialize the harness, create/register Codex role threads, and run the loop inside the repo you already have.
 
-## How The Loop Runs
+## 🔄 How The Loop Runs
 
 ```mermaid
 flowchart LR
@@ -291,39 +287,39 @@ PM may act inline only for trivial read-only status checks, direct answers to th
 
 The loop stops for the User when requirements are unclear, credentials or hardware are missing, repeated failures do not converge, or an admin action is required.
 
-## Roles
+## 👥 Roles
 
 | Agent | Default mode | Job |
 |---|---:|---|
-| PM | coordinator | Plans, routes, maintains project state, accepts work, reports to the User |
-| Dev | worktree | Implements features, bug fixes, and scoped code changes |
-| Test | worktree | Designs tests, reproduces bugs, and verifies acceptance criteria |
-| Review | readonly | Reviews diffs, architecture risk, regression risk, and test quality |
-| Version | readonly | Checks git status, commit scope, changelog, and release readiness |
-| Research | readonly | Looks up docs, dependencies, options, and technical unknowns |
-| UX | readonly | Reviews product flow, UI behavior, accessibility, and visual quality |
-| FW | optional readonly | Firmware, embedded, hardware, RTOS, device logs |
-| ML | optional worktree | Model selection, training strategy, evaluation, leakage risk |
+| 🧭 PM | coordinator | Plans, routes, maintains project state, accepts work, reports to the User |
+| 🔨 Dev | worktree | Implements features, bug fixes, and scoped code changes |
+| 🧪 Test | worktree | Designs tests, reproduces bugs, and verifies acceptance criteria |
+| 🔍 Review | readonly | Reviews diffs, architecture risk, regression risk, and test quality |
+| 🏷 Version | readonly | Checks git status, commit scope, changelog, and release readiness |
+| 📚 Research | readonly | Looks up docs, dependencies, options, and technical unknowns |
+| 🎨 UX | readonly | Reviews product flow, UI behavior, accessibility, and visual quality |
+| ⚙️ FW | optional readonly | Firmware, embedded, hardware, RTOS, device logs |
+| 🤖 ML | optional worktree | Model selection, training strategy, evaluation, leakage risk |
 
 Include firmware or ML roles at initialization:
 
 ```bash
-python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name "FirmwareProject" \
   --project-path /path/to/project \
   --project-type firmware
 
-python3 ~/.codex/skills/relayloop/scripts/init_team_loop.py \
+python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name "MLProject" \
   --project-path /path/to/project \
   --project-type ml
 ```
 
-## Bring Your Own Agents
+## 🤝 Bring Your Own Agents
 
 RelayLoop is the team operating system. [agency-agents](https://github.com/msitarzewski/agency-agents) can be an optional specialist talent pool.
 
-RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `RELAYLOOP_MESSAGE v1`, the RelayLoop progress file (`team-loop/progress.md`), messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
+RelayLoop owns the PM-led project protocol and state layer: task dispatch, the Agent roster, `RELAYLOOP_MESSAGE v1`, the RelayLoop progress file (`relay-loop/progress.md`), messages and decisions audit logs, the Dev -> Review/Test repair loop, human approval gates, and Codex-first threads, worktrees, or local execution. It does not try to own every specialist persona.
 
 Optional specialist libraries such as agency-agents can provide expert profiles, for example Security Engineer, Backend Architect, UX Researcher, Technical Writer, Performance Engineer, or other domain roles. At the reviewed upstream source, the agency-agents README describes a collection of AI agent personalities and reports 232 specialized agents across 16 divisions. Its agent files are Markdown/profile-style definitions, and its Codex integration can generate standalone TOML custom-agent files for `~/.codex/agents/`.
 
@@ -335,13 +331,13 @@ This is different from framework-centered tools:
 |---|---|
 | AutoGen / CrewAI | General multi-agent orchestration frameworks |
 | agency-agents | Optional role/profile library for specialist personas |
-| RelayLoop | PM-led project protocol, progress state, audit logs, and approval gates |
+| **RelayLoop** | PM-led project protocol, progress state, audit logs, and approval gates |
 
-Specialist import is available in the RelayLoop CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target RelayLoop workspace (`team-loop/`).
+Specialist import is available in the RelayLoop CLI. It adapts approved local Markdown only; it does not fetch remote content, run upstream scripts, install Codex agents, or write outside the target RelayLoop workspace (`relay-loop/`).
 
 ```bash
 relayloop specialists import \
-  --team-loop-dir /path/to/project/team-loop \
+  --relay-loop-dir /path/to/project/relay-loop \
   --profile-file /path/to/approved-profile.md \
   --id security-engineer \
   --display-name "Security Engineer" \
@@ -354,7 +350,7 @@ relayloop specialists import \
 
 The command defaults to dry-run and prints a JSON plan. `--profile-file` must point to a local `.md` or `.markdown` file. Use write mode only after the User has approved the source/ref/license metadata. From a checkout, use `node bin/relayloop.js ...`.
 
-## RELAYLOOP_MESSAGE v1
+## ✉️ RELAYLOOP_MESSAGE v1
 
 Every cross-Agent dispatch uses the same searchable envelope:
 
@@ -392,7 +388,7 @@ Return Format:
 END_RELAYLOOP_MESSAGE
 ```
 
-This makes Agent work auditable. Dispatches and response summaries go to the RelayLoop message log (`team-loop/messages.ndjson`); decisions go to the RelayLoop decision log (`team-loop/decisions.ndjson`); version and commit events go to the RelayLoop commit log (`team-loop/commits.ndjson`).
+This makes Agent work auditable. Dispatches and response summaries go to the RelayLoop message log (`relay-loop/messages.ndjson`); decisions go to the RelayLoop decision log (`relay-loop/decisions.ndjson`); version and commit events go to the RelayLoop commit log (`relay-loop/commits.ndjson`).
 
 `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token for RelayLoop.
 
@@ -404,14 +400,14 @@ Result: fail
 Evidence:
 - Command: npm test passed
 - Browser: http://localhost:5173/settings
-- Screenshot: /tmp/team-loop/settings-mobile.png
+- Screenshot: /tmp/relay-loop/settings-mobile.png
 - Failure: Save button overlaps footer at 390px width
 
 Next recommended action:
 - Dev should adjust footer spacing and rerun the mobile viewport check.
 ```
 
-## Safety Model
+## 🛡 Safety Model
 
 The PM Agent may coordinate work and read Agent results after the User approves execution. It must stop for User confirmation before:
 
@@ -425,7 +421,7 @@ Version Agent may create branches, commits, and changelog/version edits only aft
 
 A push is distinct from a merge or release: safe committed-change pushes are Version Agent judgment calls after readiness checks, while branch deletion, branch merge, public history rewrites, formal releases, and third-party skill installs require User confirmation.
 
-## Codex Support Today
+## 🧩 Codex Support Today
 
 RelayLoop is Codex-first today:
 
@@ -436,18 +432,18 @@ RelayLoop is Codex-first today:
 
 The method is designed to be portable, but only Codex support is documented as ready in this repository.
 
-## Future Adapters
+### Future Adapters
 
 | Adapter | Status | Notes |
 |---|---|---|
-| Codex | supported now | Primary target for this skill |
-| Claude Code | reserved | Feasible if role threads, skills, and message routing are mapped cleanly |
-| Hermes | reserved | Feasibility depends on available Agent, state, and dispatch primitives |
+| Codex | ✅ supported now | Primary target for this skill |
+| Claude Code | 🔜 reserved | Feasible if role threads, skills, and message routing are mapped cleanly |
+| Hermes | 🔜 reserved | Feasibility depends on available Agent, state, and dispatch primitives |
 
-## Recommended First Run
+## 🗺 Recommended First Run
 
 1. Install the skill.
-2. Initialize the RelayLoop workspace (`team-loop/`) in a real project.
+2. Initialize the RelayLoop workspace (`relay-loop/`) in a real project.
 3. Create an initial git commit if the project has none.
 4. Start a PM Agent thread in Codex.
 5. Ask the PM to propose a plan.
@@ -455,25 +451,24 @@ The method is designed to be portable, but only Codex support is documented as r
 7. Let PM run Dev -> Review/Test -> Version.
 8. Read the final PM report and inspect the logs.
 
-## RelayLoop Workspace Files
+## 🗂 RelayLoop Workspace Files
 
-The initializer currently creates the RelayLoop workspace at `team-loop/`. That
-directory name is the on-disk storage contract used by the code and tests.
+The initializer creates the RelayLoop workspace at `relay-loop/`. That directory name is the on-disk storage contract used by the code and tests; existing legacy `team-loop/` workspaces are detected and reused.
 
-- `team-loop/agents.json` records the role registry, thread IDs, workspace
+- `relay-loop/agents.json` records the role registry, thread IDs, workspace
   modes, and responsibilities.
-- `team-loop/progress.md` is the PM-maintained project dashboard: state, loop
+- `relay-loop/progress.md` is the PM-maintained project dashboard: state, loop
   iteration and limit, Agent status, recent dispatches/results, blockers, User
   decision needs, and next action.
-- `team-loop/messages.ndjson` records dispatches and response summaries.
-- `team-loop/decisions.ndjson` records User approvals, PM approvals, scope
+- `relay-loop/messages.ndjson` records dispatches and response summaries.
+- `relay-loop/decisions.ndjson` records User approvals, PM approvals, scope
   changes, and escalations.
-- `team-loop/commits.ndjson` records commit proposals, branch actions, and
+- `relay-loop/commits.ndjson` records commit proposals, branch actions, and
   changelog/version checks.
-- `team-loop/agent-profiles/*.md` stores role-specific operating instructions.
-- `team-loop/knowledge/*.md` stores project facts that Agents should reuse.
+- `relay-loop/agent-profiles/*.md` stores role-specific operating instructions.
+- `relay-loop/knowledge/*.md` stores project facts that Agents should reuse.
 
-## Repository Layout
+## 📁 Repository Layout
 
 ```text
 .
@@ -491,15 +486,15 @@ directory name is the on-disk storage contract used by the code and tests.
     specialist-adapters.md
     agent-skill-recommendations.md
   scripts/
-    init_team_loop.py
+    init_relay_loop.py
     check_worktree_ready.py
     log_relayloop_event.py
   test/
     relayloop.test.js
-    test_init_team_loop.py
+    test_init_relay_loop.py
 ```
 
-## Development From Source
+## 🧑‍💻 Development From Source
 
 Clone the repo, inspect the scripts, and install locally:
 
@@ -508,6 +503,7 @@ git clone https://github.com/DylanZhangzzz/RelayLoop.git
 cd RelayLoop
 
 npm test
+python3 -m unittest discover -s test -p 'test_*.py'
 node bin/relayloop.js --help
 python3 scripts/check_worktree_ready.py --project-path .
 
@@ -515,6 +511,12 @@ mkdir -p ~/.codex/skills/relayloop
 rsync -a ./ ~/.codex/skills/relayloop/
 ```
 
-## License
+## 📄 License
 
 RelayLoop is licensed under the Apache License 2.0. See [LICENSE](./LICENSE).
+
+---
+
+<div align="center">
+<sub>Built for engineers who want multiple Agents' speed — without losing the thread.</sub>
+</div>

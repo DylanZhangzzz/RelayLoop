@@ -38,9 +38,9 @@ Return Format:
 END_RELAYLOOP_MESSAGE
 ```
 
-Append the same payload or a normalized JSON representation to `team-loop/messages.ndjson`.
+Append the same payload or a normalized JSON representation to `relay-loop/messages.ndjson`.
 
-Compatibility note: `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token. `team-loop/` is retained as the project-local storage directory for compatibility.
+Compatibility note: `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token, and `relay-loop/` is the canonical project-local workspace directory. Legacy `team-loop/` workspaces are detected and reused by the initializer and remain supported via the `--team-loop-dir` CLI alias.
 
 ## Proof-Gated Loop
 
@@ -75,7 +75,7 @@ Result: fail
 Evidence:
 - Command: npm test passed
 - Browser: http://localhost:5173/settings
-- Screenshot: /tmp/team-loop/settings-mobile.png
+- Screenshot: /tmp/relay-loop/settings-mobile.png
 - Failure: Save button overlaps footer at 390px width
 
 Next recommended action:
