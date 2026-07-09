@@ -29,7 +29,7 @@ English | [简体中文](./README.zh-CN.md)
 
 <br>
 
-<img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
+<img src="./assets/relayloop-hero.svg" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
 
 </div>
 

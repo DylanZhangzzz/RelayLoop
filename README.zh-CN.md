@@ -19,7 +19,7 @@ RelayLoop 把一个目标转成可派发任务、可追踪项目状态、可验�
 
 <br>
 
-<img src="./assets/relayloop-hero.png" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
+<img src="./assets/relayloop-hero.svg" alt="RelayLoop PM-led proof-gated engineering loop" width="920">
 
 </div>
 
