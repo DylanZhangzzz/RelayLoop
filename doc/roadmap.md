@@ -78,7 +78,7 @@
 
 | # | 事项 | 说明 | 验收标准 |
 |---|---|---|---|
-| P0-1 | `relayloop validate` | 校验 `messages.ndjson` / `progress.md` / `agents.json` 是否符合协议:信封字段齐全、每条 dispatch 有 Acceptance、每个 pass 有 Evidence;发布 `relayloop.message.v1` JSON Schema | 对示例工作区跑通;坏样例给出可读报错;schema 文件入库并有测试 |
+| P0-1 | `relayloop validate` ✅ 已落地 | 校验 `agents.json` / `progress.md` / 三份 ndjson 与 `RELAYLOOP_MESSAGE v1` 信封;强制证据门(`pass` 无 evidence 即报错);`schemas/` 下发布 message/event/agents 三份 JSON Schema;支持 `--json` / `--strict`,exit code 适配 CI | 对初始化工作区跑通;坏样例带文件名+行号可读报错;schema 入库且有测试(见 `test/validate.test.js`) |
 | P0-2 | `relayloop status` | 从工作区渲染当前状态摘要(状态机、轮次、阻塞、待批事项),把 progress.md 从"PM 手写"变成"可再生成 + 可校验" | 在 demo 工作区输出正确摘要;有测试 |
 | P0-3 | Demo 仓库 + 演示 | 一个可跑的示例项目 + README 内 60 秒流程演示(GIF/录屏) | 新用户 10 分钟内跑完首个 loop |
 

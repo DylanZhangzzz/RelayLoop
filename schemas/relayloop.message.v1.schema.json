@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DylanZhangzzz/RelayLoop/main/schemas/relayloop.message.v1.schema.json",
+  "title": "RELAYLOOP_MESSAGE v1 (normalized JSON form)",
+  "description": "Normalized JSON representation of the RELAYLOOP_MESSAGE v1 text envelope. Every cross-Agent dispatch must carry these fields; Task and Acceptance are mandatory so the loop stays proof-gated.",
+  "type": "object",
+  "required": [
+    "protocol",
+    "project",
+    "mode",
+    "from_role",
+    "to_role",
+    "message_id",
+    "requires_response",
+    "response_to",
+    "priority",
+    "task",
+    "acceptance"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "RELAYLOOP_MESSAGE v1"
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": ["task", "goal", "review"]
+    },
+    "from_role": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "Core roles: pm|dev|test|version|review|research|ux|fw|ml. Other values identify imported specialists."
+    },
+    "to_role": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "message_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Convention: <timestamp-role-counter>."
+    },
+    "requires_response": {
+      "enum": ["yes", "no"]
+    },
+    "response_to": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A message_id, or the literal string 'none'."
+    },
+    "priority": {
+      "enum": ["low", "normal", "high", "urgent"]
+    },
+    "context": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The concrete request."
+    },
+    "acceptance": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "User-observable result, required commands/checks, required evidence, and how Test judges pass/fail."
+    },
+    "return_format": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Expected reply fields: Result, Summary, Evidence, Files changed, Commands run, Risks/blockers, Next recommended action."
+    }
+  }
+}

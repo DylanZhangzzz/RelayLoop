@@ -155,6 +155,13 @@ RELAYLOOP_MESSAGE v1
 
 每条任务都应该包含 `Task:`、`Acceptance:` 和返回格式要求。完整协议、角色说明和 specialist adapter 设计请见英文 README 与 `references/` 目录。
 
+**"凭证据交付"是机器校验的,不是口号**。`relayloop validate` 会检查工作区和消息是否符合 v1 协议——信封字段齐全、每条派发有 `Task:`/`Acceptance:`、`agents.json` 注册了 PM,以及证据门:`result: pass` 而没有 `evidence` 直接报错。协议的 JSON Schema 发布在 `schemas/` 目录,exit code 适配 CI:
+
+```bash
+relayloop validate --relay-loop-dir /path/to/project/relay-loop
+relayloop validate --message-file dispatch.txt
+```
+
 ## 🧩 当前支持
 
 RelayLoop 核心（协议信封、`relay-loop/` 工作区、审计日志、脚本）是纯文本、平台无关的。平台在"跑 Agent"上的每次进步都是 RelayLoop 的顺风——线程更强、子代理更快,循环就更快,契约不变。

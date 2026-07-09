@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DylanZhangzzz/RelayLoop/main/schemas/relayloop.event.v1.schema.json",
+  "title": "RelayLoop NDJSON event v1",
+  "description": "One line of relay-loop/messages.ndjson, commits.ndjson, or decisions.ndjson. Proof gate: a message event reporting result 'pass' must carry non-empty evidence.",
+  "type": "object",
+  "required": ["schema", "eventType", "timestamp", "actor", "summary"],
+  "properties": {
+    "schema": {
+      "const": "relayloop.event.v1"
+    },
+    "eventType": {
+      "enum": ["message", "commit", "decision"]
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T"
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": ["task", "goal", "review"]
+    },
+    "result": {
+      "enum": ["pass", "fail", "blocked"]
+    },
+    "evidence": {
+      "description": "Commands run with output, file paths, screenshot paths, logs. Required when result is 'pass'.",
+      "anyOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 }
+      ]
+    }
+  },
+  "if": {
+    "properties": { "eventType": { "const": "message" }, "result": { "const": "pass" } },
+    "required": ["result"]
+  },
+  "then": {
+    "required": ["evidence"]
+  }
+}

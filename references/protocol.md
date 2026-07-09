@@ -42,6 +42,8 @@ Append the same payload or a normalized JSON representation to `relay-loop/messa
 
 Compatibility note: `RELAYLOOP_MESSAGE v1` is the canonical v1 protocol token, and `relay-loop/` is the canonical project-local workspace directory. Legacy `team-loop/` workspaces are detected and reused by the initializer and remain supported via the `--team-loop-dir` CLI alias.
 
+Machine validation: the JSON Schema files for the normalized message form (`relayloop.message.v1`), NDJSON events (`relayloop.event.v1`), and the agents registry (`relayloop.agents.v1`) live in `schemas/`. `relayloop validate` enforces them, including the proof gate: a message event with `result: pass` must carry non-empty `evidence`.
+
 ## Proof-Gated Loop
 
 RelayLoop uses **Acceptance-First Dispatch**. PM must include `Task:` and `Acceptance:` in every task, goal, or review dispatch. The task states what should be done; acceptance states what proof is required before the loop can count the work as complete.

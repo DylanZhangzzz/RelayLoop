@@ -4,6 +4,8 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 
+const { validateEnvelopeText, validateMessageObject, validateWorkspace, newReport } = require("../lib/validate.js");
+
 const REQUIRED_IMPORT_OPTIONS = [
   "relay-loop-dir",
   "profile-file",
@@ -21,11 +23,14 @@ function printRootHelp() {
 
 Usage:
   relayloop --help
+  relayloop validate --help
+  relayloop validate [options]
   relayloop specialists --help
   relayloop specialists import --help
   relayloop specialists import [options]
 
 Commands:
+  relayloop validate             Check a workspace or message against the RelayLoop protocol.
   relayloop specialists import   Import approved local Markdown into RelayLoop.
 
 RelayLoop stores project state in a project-local \`relay-loop/\` workspace.
@@ -79,9 +84,96 @@ function fail(message) {
   return 2;
 }
 
-function parseOptions(args) {
+function printValidateHelp() {
+  console.log(`relayloop validate
+
+Checks RelayLoop artifacts against the v1 protocol. Validates:
+  - agents.json      (relayloop.agents.v1: project fields, roles, PM presence)
+  - progress.md      (required sections and loop state)
+  - *.ndjson logs    (relayloop.event.v1: per-line JSON, actor/summary, event types)
+  - proof gate       (a message event with result 'pass' must carry evidence)
+  - message envelope (RELAYLOOP_MESSAGE v1 headers plus Task/Acceptance sections)
+
+The JSON Schema files this enforces live in schemas/.
+
+Usage:
+  relayloop validate --relay-loop-dir <path> [--json] [--strict]
+  relayloop validate --message-file <path>  [--json] [--strict]
+
+Options:
+  --relay-loop-dir <path>  Validate a RelayLoop workspace directory.
+  --team-loop-dir <path>   Deprecated alias of --relay-loop-dir for legacy workspaces.
+  --message-file <path>    Validate one RELAYLOOP_MESSAGE v1 envelope: .txt/.md as
+                           envelope text, .json as the normalized JSON form.
+  --json                   Print a machine-readable JSON report.
+  --strict                 Treat warnings as errors.
+
+Exit codes: 0 valid, 1 validation errors found, 2 usage error.`);
+}
+
+function printReport(report, asJson, strict) {
+  const failed = report.errors.length > 0 || (strict && report.warnings.length > 0);
+  if (asJson) {
+    console.log(JSON.stringify({ ok: !failed, target: report.target, errors: report.errors, warnings: report.warnings }, null, 2));
+  } else {
+    console.log(`RelayLoop validate: ${report.target}`);
+    for (const item of report.errors) {
+      console.log(`  ERROR  ${item.where}: ${item.problem}`);
+    }
+    for (const item of report.warnings) {
+      console.log(`  WARN   ${item.where}: ${item.problem}`);
+    }
+    console.log(`Result: ${report.errors.length} error(s), ${report.warnings.length} warning(s)${failed ? "" : " - OK"}`);
+  }
+  return failed ? 1 : 0;
+}
+
+function runValidate(args) {
+  if (args.includes("--help")) {
+    printValidateHelp();
+    return 0;
+  }
+  let options;
+  try {
+    options = parseOptions(args, ["json", "strict", "help"]);
+  } catch (error) {
+    return fail(error.message);
+  }
+  if (options["team-loop-dir"] && !options["relay-loop-dir"]) {
+    options["relay-loop-dir"] = options["team-loop-dir"];
+  }
+  const dir = options["relay-loop-dir"];
+  const messageFile = options["message-file"];
+  if ((dir && messageFile) || (!dir && !messageFile)) {
+    return fail("Pass exactly one of --relay-loop-dir or --message-file. See relayloop validate --help.");
+  }
+
+  let report;
+  if (dir) {
+    report = validateWorkspace(path.resolve(dir));
+  } else {
+    const filePath = path.resolve(messageFile);
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      return fail(`Message file does not exist: ${filePath}`);
+    }
+    const content = fs.readFileSync(filePath, "utf8");
+    if (/\.json$/i.test(filePath)) {
+      report = newReport(filePath);
+      try {
+        validateMessageObject(JSON.parse(content), report, path.basename(filePath));
+      } catch (error) {
+        report.errors.push({ where: path.basename(filePath), problem: `invalid JSON: ${error.message}` });
+      }
+    } else {
+      report = validateEnvelopeText(content, path.basename(filePath));
+    }
+  }
+  return printReport(report, Boolean(options.json), Boolean(options.strict));
+}
+
+function parseOptions(args, flagNames = ["write", "force", "help"]) {
   const options = {};
-  const flags = new Set(["write", "force", "help"]);
+  const flags = new Set(flagNames);
   for (let index = 0; index < args.length; index += 1) {
     const item = args[index];
     if (!item.startsWith("--")) {
@@ -356,6 +448,9 @@ function main(argv) {
   if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
     printRootHelp();
     return 0;
+  }
+  if (args[0] === "validate") {
+    return runValidate(args.slice(1));
   }
   if (args[0] !== "specialists") {
     return fail(`Unknown command: ${args[0]}`);

@@ -123,6 +123,8 @@ All cross-Agent messages must use `RELAYLOOP_MESSAGE v1` and include `mode: task
 
 Append each sent message and response summary to `relay-loop/messages.ndjson`. Update `relay-loop/progress.md` after every loop iteration.
 
+PM may run `node bin/relayloop.js validate --relay-loop-dir <project>/relay-loop` (or `relayloop validate` when the CLI is installed) after updating the logs to check protocol compliance, including the proof gate: `pass` results without evidence are errors.
+
 ## Permission Boundaries
 
 PM may automatically message Agents and read thread results. Dylan must confirm:

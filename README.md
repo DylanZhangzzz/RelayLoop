@@ -426,6 +426,20 @@ Next recommended action:
 - Dev should adjust footer spacing and rerun the mobile viewport check.
 ```
 
+## 🔎 Validate The Workspace
+
+"Evidence required" is machine-checked, not aspirational. `relayloop validate` lints a workspace or a single message against the v1 protocol:
+
+```bash
+relayloop validate --relay-loop-dir /path/to/project/relay-loop
+relayloop validate --message-file dispatch.txt        # RELAYLOOP_MESSAGE v1 text
+relayloop validate --message-file dispatch.json       # normalized JSON form
+```
+
+It checks that `agents.json` matches `relayloop.agents.v1` (including a registered PM), that `progress.md` keeps its required sections and a known loop state, that every NDJSON log line is a well-formed `relayloop.event.v1` event — and it enforces the proof gate: **a message event reporting `result: pass` without non-empty `evidence` is an error.** Envelopes missing `Task:` or `Acceptance:` sections fail too.
+
+Exit codes are CI-friendly (`0` valid, `1` violations, `2` usage), `--json` emits a machine-readable report, and `--strict` turns warnings into failures. The JSON Schema files the validator enforces live in [`schemas/`](./schemas) — they are the interop contract for any harness that wants to read or write a RelayLoop workspace.
+
 ## 🛡 Safety Model
 
 The PM Agent may coordinate work and read Agent results after the User approves execution. It must stop for User confirmation before:
@@ -505,6 +519,12 @@ The initializer creates the RelayLoop workspace at `relay-loop/`. That directory
     openai.yaml
   bin/
     relayloop.js
+  lib/
+    validate.js
+  schemas/
+    relayloop.message.v1.schema.json
+    relayloop.event.v1.schema.json
+    relayloop.agents.v1.schema.json
   references/
     protocol.md
     roles.md
@@ -519,6 +539,7 @@ The initializer creates the RelayLoop workspace at `relay-loop/`. That directory
     log_relayloop_event.py
   test/
     relayloop.test.js
+    validate.test.js
     test_init_relay_loop.py
 ```
 
