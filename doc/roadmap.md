@@ -87,7 +87,7 @@
 | # | 事项 | 说明 | 验收标准 |
 |---|---|---|---|
 | P1-1 | Evidence Manifest | Test 返回时附结构化清单(命令 + 退出码、文件哈希、截图路径);`relayloop verify` 可重放验收命令 | pass 结果可被第三方重放核验 |
-| P1-2 | Claude Code 适配器 | README 中已 reserved;skill 体系高度相似,Agent Teams 恰好缺这层契约,是投入产出比最高的扩张 | 同一工作区可被 Codex 与 Claude Code 双端驱动 |
+| P1-2 | Claude Code 适配器 ✅ 已落地 | `init_relay_loop.py --adapter claude-code` 生成 `.claude/agents/relayloop-*.md` 子代理定义并按平台过滤推荐技能;适配文档见 `references/adapters/claude-code.md`(子代理 / agent-teams / 多会话三种模式) | 同一工作区可被 Codex 与 Claude Code 双端驱动 |
 | P1-3 | Spec Kit / AGENTS.md 互操作 | Project Harness(AGENTS.md + specs/)与两者同构;补互操作文档 + 字段映射,借生态的势 | 有映射文档;Spec Kit 项目可无损接入 RelayLoop 循环 |
 | P1-4 | `relayloop report` | 从 ndjson 生成度量:平均 loop 轮次、一次通过率、返工原因分布 | 对历史工作区生成可读报告 |
 

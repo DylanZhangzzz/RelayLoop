@@ -1,6 +1,6 @@
 ---
 name: relayloop
-description: PM-led multi-agent project orchestration for Codex. Use when Dylan wants a RelayLoop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, FW, and ML agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs, message logs, commit logs, decision logs, or controlled installation of third-party skills.
+description: PM-led multi-agent project orchestration for Codex and Claude Code. Use when Dylan wants a RelayLoop workspace, a PM Agent that coordinates Dev, Test, Review, Version, Research, UX, FW, and ML agents, automatic delivery loops, role-specific agent profiles, Codex thread IDs or Claude Code subagents, message logs, commit logs, decision logs, or controlled installation of third-party skills.
 ---
 
 # RelayLoop
@@ -11,6 +11,11 @@ Use this skill to initialize and run a PM-led multi-agent project loop. Dylan ta
 
 RelayLoop uses the `relayloop` skill id, the `RELAYLOOP_MESSAGE v1` protocol envelope, and the project-local RelayLoop workspace at `relay-loop/`. Existing legacy `team-loop/` workspaces are detected and reused.
 
+The protocol, workspace, and scripts are platform-independent. Platform-specific behavior (how role Agents are created and how messages reach them) lives in adapters:
+
+- **Codex** (default): role Agents are Codex threads managed with `codex_app.*` tools.
+- **Claude Code**: role Agents are subagents generated into `.claude/agents/`; see `references/adapters/claude-code.md`.
+
 ## Required References
 
 Load only what is needed:
@@ -18,6 +23,7 @@ Load only what is needed:
 - `references/protocol.md`: message envelope, task modes, auto-loop rules, and approval boundaries.
 - `references/roles.md`: default role profiles, worktree policy, and recommended skills.
 - `references/project-files.md`: `relay-loop/` file schemas and logging rules.
+- `references/adapters/claude-code.md`: Claude Code adapter — install path, subagent mapping, and operating modes.
 - `references/agent-skill-recommendations.md`: candidate third-party skills and install review template.
 
 ## Initialization Workflow
@@ -32,18 +38,29 @@ Load only what is needed:
    - whether FW Agent is included for firmware/embedded/hardware work;
    - whether ML Agent is included for machine-learning, data-science, or AI work.
 3. Wait for Dylan approval.
-4. Run `scripts/init_relay_loop.py` to create the project-local `relay-loop/` workspace.
-5. Use `codex_app.list_projects` before creating project-scoped Agent threads.
-6. Before creating any worktree-backed Agent, run `scripts/check_worktree_ready.py --project-path <project>`.
-7. Use `codex_app.create_thread` only after Dylan has approved initial Agent creation or a later new role.
+4. Run `scripts/init_relay_loop.py` to create the project-local `relay-loop/` workspace. On Claude Code, pass `--adapter claude-code` so subagent definitions are generated too.
+5. Before creating any worktree-backed Agent, run `scripts/check_worktree_ready.py --project-path <project>`.
    - If worktree preflight reports `readyForWorktree: false`, do not request a worktree-backed Agent yet. Either ask Dylan to create an initial commit or create that Agent in the local project environment until a valid HEAD exists.
    - If preflight reports a valid `branch`, use that branch only when it exists. Do not assume `main`.
-8. Write all returned thread IDs to `relay-loop/agents.json`.
-9. Use `codex_app.set_thread_title` with the RelayLoop title convention:
+6. Register role Agents using the platform adapter (only after Dylan has approved initial Agent creation or a later new role).
+
+Codex adapter steps:
+
+1. Use `codex_app.list_projects` before creating project-scoped Agent threads.
+2. Use `codex_app.create_thread` to create role Agent threads.
+3. Write all returned thread IDs to `relay-loop/agents.json`.
+4. Use `codex_app.set_thread_title` with the RelayLoop title convention:
    - PM thread: `<project> - PM Agent`, because it may be pinned outside the project group.
    - Other project-scoped Agent threads: `<Role> Agent`, for example `Dev Agent`, `Test Agent`, `Review Agent`. Do not prefix them with the project name when they already appear under that project in the Codex sidebar.
    - Projectless or cross-project threads: `<project> - <Role> Agent`.
-10. Use `codex_app.set_thread_pinned` for the PM thread and active delivery threads when useful.
+5. Use `codex_app.set_thread_pinned` for the PM thread and active delivery threads when useful.
+
+Claude Code adapter steps:
+
+1. The main session is the PM Agent; no PM thread is created.
+2. The initializer already generated `.claude/agents/relayloop-<role>.md` subagent definitions; start a fresh session if they are not yet discovered.
+3. `threadId` stays `null` in `relay-loop/agents.json`; each non-PM agent entry carries a `subagentPath` instead.
+4. Dispatch by launching the matching `relayloop-<role>` subagent with the full `RELAYLOOP_MESSAGE v1` envelope as the prompt. See `references/adapters/claude-code.md` for agent-teams and multi-session modes.
 
 Default workspace policy:
 
@@ -120,12 +137,21 @@ Version Agent may create a new branch, commit, or update changelog/version files
 
 ## Scripts
 
-- Initialize a project workspace:
+- Initialize a project workspace (from `~/.codex/skills/relayloop` on Codex, `~/.claude/skills/relayloop` on Claude Code):
 
 ```bash
 python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
   --project-name ExampleProject \
   --project-path /path/to/project
+```
+
+- On Claude Code, add `--adapter claude-code` to also generate `.claude/agents/relayloop-*.md` subagent definitions:
+
+```bash
+python3 ~/.claude/skills/relayloop/scripts/init_relay_loop.py \
+  --project-name ExampleProject \
+  --project-path /path/to/project \
+  --adapter claude-code
 ```
 
 - Check whether a project can create worktree-backed Agents:

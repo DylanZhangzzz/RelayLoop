@@ -126,6 +126,68 @@ class RelayLoopProjectHarnessTests(unittest.TestCase):
             self.assertFalse((project / "AGENTS.md").exists())
             self.assertFalse((project / "specs").exists())
 
+    def test_claude_code_adapter_generates_subagent_definitions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+
+            payload = self.parse_stdout_json(self.run_init(project, "--adapter", "claude-code"))
+
+            self.assertEqual(payload["adapter"], "claude-code")
+            self.assertIn("relayloop-* subagents", payload["nextAction"])
+            dev_subagent = project / ".claude" / "agents" / "relayloop-dev.md"
+            self.assertTrue(dev_subagent.exists())
+            self.assertFalse((project / ".claude" / "agents" / "relayloop-pm.md").exists())
+            text = dev_subagent.read_text()
+            self.assertIn("name: relayloop-dev", text)
+            self.assertIn("RELAYLOOP_MESSAGE v1", text)
+            self.assertIn("relay-loop/agent-profiles/dev.md", text)
+
+            agents = json.loads((project / "relay-loop" / "agents.json").read_text())
+            self.assertEqual(agents["project"]["adapter"], "claude-code")
+            dev_entry = next(item for item in agents["agents"] if item["role"] == "dev")
+            self.assertEqual(dev_entry["subagentPath"], ".claude/agents/relayloop-dev.md")
+            pm_entry = next(item for item in agents["agents"] if item["role"] == "pm")
+            self.assertNotIn("subagentPath", pm_entry)
+
+    def test_claude_code_adapter_filters_codex_only_skills(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+
+            self.parse_stdout_json(self.run_init(project, "--adapter", "claude-code"))
+
+            agents = json.loads((project / "relay-loop" / "agents.json").read_text())
+            version_entry = next(item for item in agents["agents"] if item["role"] == "version")
+            self.assertNotIn("github:yeet", version_entry["recommendedSkills"])
+            self.assertIn("finishing-a-development-branch", version_entry["recommendedSkills"])
+            version_profile = (project / "relay-loop" / "agent-profiles" / "version.md").read_text()
+            self.assertNotIn("github:yeet", version_profile)
+
+    def test_default_codex_adapter_keeps_existing_behavior(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+
+            payload = self.parse_stdout_json(self.run_init(project))
+
+            self.assertEqual(payload["adapter"], "codex")
+            self.assertFalse((project / ".claude").exists())
+            agents = json.loads((project / "relay-loop" / "agents.json").read_text())
+            self.assertEqual(agents["project"]["adapter"], "codex")
+            version_entry = next(item for item in agents["agents"] if item["role"] == "version")
+            self.assertIn("github:yeet", version_entry["recommendedSkills"])
+            self.assertNotIn("subagentPath", version_entry)
+
+    def test_claude_code_adapter_dry_run_creates_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+
+            payload = self.parse_stdout_json(self.run_init(project, "--adapter", "claude-code", "--dry-run"))
+
+            self.assertEqual(payload["adapter"], "claude-code")
+            self.assertFalse((project / ".claude").exists())
+            self.assertFalse((project / "relay-loop").exists())
+            planned_subagents = [item for item in payload["actions"] if ".claude" in item["path"]]
+            self.assertGreater(len(planned_subagents), 0)
+
     def test_existing_legacy_team_loop_workspace_is_reused(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp)
