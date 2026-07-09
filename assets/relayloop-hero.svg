@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="900" viewBox="0 0 1240 900" font-family="Liberation Sans, DejaVu Sans, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="55%" stop-color="#f6f9fc"/>
+      <stop offset="100%" stop-color="#eef3f8"/>
+    </linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="2.4" fill="#c7d4e6"/>
+    </pattern>
+    <linearGradient id="dotFade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="dotMask">
+      <rect x="0" y="0" width="340" height="220" fill="url(#dotFade)"/>
+    </mask>
+    <filter id="nodeShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="7" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <filter id="hubShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="1240" height="900" fill="url(#bgGrad)"/>
+  <ellipse cx="1290" cy="960" rx="520" ry="280" fill="#d9efe8" opacity="0.45"/>
+  <rect x="0" y="0" width="340" height="220" fill="url(#dots)" mask="url(#dotMask)" opacity="0.75"/>
+  <g fill="none" stroke="#dde6ef" stroke-width="2">
+    <circle cx="40" cy="1000" r="170"/>
+    <circle cx="40" cy="1000" r="250"/>
+    <circle cx="40" cy="1000" r="330"/>
+  </g>
+  <circle cx="62" cy="710" r="7" fill="none" stroke="#60a5fa" stroke-width="3"/>
+  <circle cx="248" cy="778" r="6" fill="none" stroke="#93c5fd" stroke-width="3"/>
+  <circle cx="345" cy="790" r="6" fill="#2dd4bf"/>
+
+  <!-- left text block -->
+  <text x="70" y="388" font-size="88" font-weight="bold" fill="#111827" letter-spacing="-2">RelayLoop</text>
+  <text x="72" y="458" font-size="29" fill="#64748b">PM-led, proof-gated agent teamwork</text>
+  <rect x="74" y="496" width="150" height="7" rx="3.5" fill="url(#ringGrad)"/>
+
+  <text x="74" y="565" font-size="16" font-weight="bold" fill="#94a3b8" letter-spacing="3">RUNS ON</text>
+  <g>
+    <rect x="72" y="584" width="128" height="48" rx="24" fill="#ffffff" stroke="#d3dde8" stroke-width="1.5" filter="url(#nodeShadow)"/>
+    <circle cx="100" cy="608" r="6" fill="#2563eb"/>
+    <text x="116" y="616" font-size="22" font-weight="bold" fill="#334155">Codex</text>
+    <rect x="216" y="584" width="192" height="48" rx="24" fill="#ffffff" stroke="#d3dde8" stroke-width="1.5" filter="url(#nodeShadow)"/>
+    <circle cx="244" cy="608" r="6" fill="#10b981"/>
+    <text x="260" y="616" font-size="22" font-weight="bold" fill="#334155">Claude Code</text>
+  </g>
+  <text x="74" y="676" font-size="20" fill="#94a3b8">One protocol. One workspace. Evidence required.</text>
+
+  <!-- orbit -->
+  <circle cx="840" cy="465" r="255" fill="none" stroke="url(#ringGrad)" stroke-width="2" stroke-dasharray="3 10" opacity="0.8"/>
+  <!-- spokes -->
+  <g stroke="#b6c4d8" stroke-width="1.6">
+    <line x1="840" y1="465" x2="840" y2="210"/>
+    <line x1="840" y1="465" x2="1061" y2="338"/>
+    <line x1="840" y1="465" x2="1061" y2="593"/>
+    <line x1="840" y1="465" x2="840" y2="720"/>
+    <line x1="840" y1="465" x2="619" y2="593"/>
+    <line x1="840" y1="465" x2="619" y2="338"/>
+  </g>
+  <!-- accent dots on orbit (midpoints between nodes) -->
+  <circle cx="1095" cy="465" r="5.5" fill="#2563eb"/>
+  <circle cx="712.5" cy="244.2" r="5.5" fill="#2563eb"/>
+  <circle cx="712.5" cy="685.8" r="5.5" fill="#14b8a6"/>
+
+  <!-- hub -->
+  <g transform="translate(840,465)">
+    <circle r="114" fill="#ffffff" filter="url(#hubShadow)"/>
+    <circle r="97" fill="#ffffff" stroke="url(#ringGrad)" stroke-width="15"/>
+    <path d="M -47 -34 A 58 58 0 0 1 47 -34" fill="none" stroke="#2563eb" stroke-width="4.5" stroke-linecap="round" marker-end="url(#arrowBlue)"/>
+    <path d="M 47 34 A 58 58 0 0 1 -47 34" fill="none" stroke="#10b981" stroke-width="4.5" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+    <text x="0" y="12" font-size="35" font-weight="bold" fill="#111827" text-anchor="middle">RelayLoop</text>
+  </g>
+
+  <!-- nodes -->
+  <!-- User (top) -->
+  <g transform="translate(840,210)">
+    <circle r="63" fill="#ffffff" filter="url(#nodeShadow)"/>
+    <g fill="none" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-14)">
+      <circle cx="0" cy="-5" r="7.5"/>
+      <path d="M -13 15 a 13 10 0 0 1 26 0"/>
+    </g>
+    <text x="0" y="36" font-size="23" font-weight="bold" fill="#1f2937" text-anchor="middle">User</text>
+  </g>
+  <!-- Dev (upper right) -->
+  <g transform="translate(1061,338)">
+    <circle r="63" fill="#ffffff" filter="url(#nodeShadow)"/>
+    <g fill="none" stroke="#0d9488" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-12)">
+      <path d="M -7 -8 L -16 0 L -7 8"/>
+      <path d="M 7 -8 L 16 0 L 7 8"/>
+      <path d="M 3 -11 L -3 11"/>
+    </g>
+    <text x="0" y="36" font-size="23" font-weight="bold" fill="#1f2937" text-anchor="middle">Dev</text>
+  </g>
+  <!-- Test (lower right) -->
+  <g transform="translate(1061,593)">
+    <circle r="63" fill="#ffffff" filter="url(#nodeShadow)"/>
+    <g fill="none" stroke="#0d9488" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-12)">
+      <path d="M 0 -13 L 11 -8.5 L 11 0 C 11 8 6.5 12 0 14.5 C -6.5 12 -11 8 -11 0 L -11 -8.5 Z"/>
+      <path d="M -4.5 0.5 L -1 4 L 5.5 -3"/>
+    </g>
+    <text x="0" y="36" font-size="23" font-weight="bold" fill="#1f2937" text-anchor="middle">Test</text>
+  </g>
+  <!-- Version (bottom) -->
+  <g transform="translate(840,720)">
+    <circle r="63" fill="#ffffff" filter="url(#nodeShadow)"/>
+    <g fill="none" stroke="#0891b2" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-12)">
+      <path d="M 0 -12 L 13 -4.5 L 0 3 L -13 -4.5 Z"/>
+      <path d="M -13 2 L 0 9.5 L 13 2"/>
+      <path d="M -13 8.5 L 0 16 L 13 8.5"/>
+    </g>
+    <text x="0" y="36" font-size="23" font-weight="bold" fill="#1f2937" text-anchor="middle">Version</text>
+  </g>
+  <!-- Review (lower left) -->
+  <g transform="translate(619,593)">
+    <circle r="63" fill="#ffffff" filter="url(#nodeShadow)"/>
+    <g fill="none" stroke="#0d9488" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-12)">
+      <path d="M -9 -12 L 11 -12 A 4 4 0 0 1 15 -8 L 15 4 A 4 4 0 0 1 11 8 L -1 8 L -8 15 L -8 8 L -11 8 A 4 4 0 0 1 -15 4 L -15 -8 A 4 4 0 0 1 -11 -12 Z"/>
+      <path d="M -8 -5 L 8 -5"/>
+      <path d="M -8 1 L 4 1"/>
+    </g>
+    <text x="0" y="36" font-size="23" font-weight="bold" fill="#1f2937" text-anchor="middle">Review</text>
+  </g>
+  <!-- PM (upper left) -->
+  <g transform="translate(619,338)">
+    <circle r="63" fill="#ffffff" filter="url(#nodeShadow)"/>
+    <g fill="none" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-12)">
+      <rect x="-11" y="-11" width="22" height="26" rx="3"/>
+      <path d="M -5 -13 L 5 -13 L 5 -8 L -5 -8 Z" fill="#2563eb" stroke="none"/>
+      <path d="M -5 -1 L 5 -1"/>
+      <path d="M -5 5 L 5 5"/>
+    </g>
+    <text x="0" y="36" font-size="23" font-weight="bold" fill="#1f2937" text-anchor="middle">PM</text>
+  </g>
+</svg>
