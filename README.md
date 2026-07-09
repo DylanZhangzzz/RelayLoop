@@ -4,8 +4,9 @@
 
 **PM-led engineering loops for Codex & Claude Code agent teams**
 
-RelayLoop is the relay layer that turns one objective into dispatched Agent work,<br>
-durable project state, review/test loops, and git readiness.
+Platforms run your agents. **RelayLoop makes their work provable** —<br>
+turning one objective into dispatched Agent work, evidence-gated review loops,<br>
+and durable repo-local project state.
 
 <br>
 
@@ -37,7 +38,9 @@ English | [简体中文](./README.zh-CN.md)
 
 ## 🚀 What Is RelayLoop?
 
-RelayLoop is a **Codex-first, PM-led relay layer for engineering agent teams**, with a supported Claude Code adapter.
+RelayLoop is a **PM-led, evidence-gated delivery layer for engineering agent teams** — Codex-first, with a supported Claude Code adapter.
+
+Agent platforms keep getting better at *running* agents in parallel: Codex threads, Claude Code subagents, mission-control dashboards. What no platform owns is the delivery contract — who was assigned what, what proof "done" requires, and where the auditable record lives. RelayLoop is that contract layer. Every platform improvement in running agents makes the loop faster; the contract stays the same.
 
 It is not a generic agent framework and not an agent group chat. It is a lightweight, repo-local operating system for Codex Desktop and Codex threads: the User gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains the RelayLoop progress file (`relay-loop/progress.md`) as the active single source of truth; Agents return results with evidence; audit logs land in the repo; and the loop stops whenever User approval is required.
 
@@ -439,7 +442,7 @@ A push is distinct from a merge or release: safe committed-change pushes are Ver
 
 ## 🧩 Platform Support
 
-The RelayLoop core — protocol envelope, `relay-loop/` workspace, audit logs, and scripts — is plain text and platform-independent. Platform-specific behavior lives in adapters:
+The RelayLoop core — protocol envelope, `relay-loop/` workspace, audit logs, and scripts — is plain text and platform-independent. Platforms compete on running agents; RelayLoop rides that progress: better threads and better subagents just make the loop faster, while the delivery contract stays the same. Platform-specific behavior lives in adapters:
 
 **Codex (primary):**
 
@@ -544,4 +547,6 @@ RelayLoop is licensed under the Apache License 2.0. See [LICENSE](./LICENSE).
 
 <div align="center">
 <sub>Built for engineers who want multiple Agents' speed — without losing the thread.</sub>
+<br>
+<sub><strong>One protocol. One workspace. Evidence required.</strong></sub>
 </div>

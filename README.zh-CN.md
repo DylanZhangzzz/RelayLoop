@@ -2,9 +2,10 @@
 
 # RelayLoop
 
-**面向 Codex Agent 团队的 PM 主导工程循环**
+**面向 Codex 与 Claude Code Agent 团队的 PM 主导工程循环**
 
-RelayLoop 把一个目标转成可派发任务、可追踪项目状态、可验证交付证据和可审计 git 流程。
+平台负责把 Agent 跑起来,**RelayLoop 负责让 Agent 的工作可证明**——<br>
+把一个目标转成可派发任务、证据门控的审查循环和可审计的仓库本地项目状态。
 
 <br>
 
@@ -27,7 +28,9 @@ RelayLoop 把一个目标转成可派发任务、可追踪项目状态、可验�
 
 ## 🚀 RelayLoop 是什么？
 
-RelayLoop 是一个 **Codex-first、PM-led 的多 Agent 工程协作层**。
+RelayLoop 是一个 **PM 主导、证据门控的 Agent 团队交付层**——Codex 优先,同时支持 Claude Code。
+
+Agent 平台在"把 Agent 跑起来"这件事上越来越强:Codex threads、Claude Code 子代理、mission-control 指挥台。但没有任何平台拥有**交付契约**——谁被派了什么、"做完"需要什么证据、可审计的记录放在哪里。RelayLoop 就是这个契约层。平台每一次跑得更快,循环就转得更快;契约本身保持不变。
 
 它不是泛泛的 agent framework，也不是 agent 群聊。用户把目标交给 PM Agent；PM 拆任务并写验收标准；Dev、Test、Review、Version、Research、UX 等角色各自执行；RelayLoop 进度文件（`relay-loop/progress.md`）持续记录项目状态；所有消息、决策和提交记录都落在仓库本地。
 
@@ -154,6 +157,8 @@ RELAYLOOP_MESSAGE v1
 
 ## 🧩 当前支持
 
+RelayLoop 核心（协议信封、`relay-loop/` 工作区、审计日志、脚本）是纯文本、平台无关的。平台在"跑 Agent"上的每次进步都是 RelayLoop 的顺风——线程更强、子代理更快,循环就更快,契约不变。
+
 - Codex skill：✅ 当前支持（主要目标平台;threads 作为角色 Agent,worktrees 隔离 Dev/Test）
 - Claude Code：✅ 当前支持（主会话为 PM,`relayloop-*` 子代理为角色;详见 [适配文档](./references/adapters/claude-code.md)）
 - Hermes：🔜 预留未来适配
@@ -175,4 +180,6 @@ RelayLoop 使用 Apache License 2.0。详见 [LICENSE](./LICENSE)。
 
 <div align="center">
 <sub>为想要多 Agent 速度、又不想丢掉工程主线的开发者而建。</sub>
+<br>
+<sub><strong>一个协议,一个工作区,凭证据交付。</strong></sub>
 </div>
