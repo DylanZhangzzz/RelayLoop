@@ -15,6 +15,10 @@ DEFAULT_WORKSPACE_DIRNAME = "relay-loop"
 
 LEGACY_WORKSPACE_DIRNAME = "team-loop"
 
+ADAPTERS = ("codex", "claude-code")
+
+DEFAULT_ADAPTER = "codex"
+
 ROLES = ("pm", "dev", "test", "version", "review", "research", "ux", "fw", "ml")
 
 DEFAULT_ROLES = ("pm", "dev", "test", "version", "review", "research", "ux")
@@ -172,6 +176,28 @@ def knowledge_refs_for(role: str, workspace_dirname: str) -> list[str]:
     return [f"{workspace_dirname}/{ref}" for ref in KNOWLEDGE_REFS[role]]
 
 
+# Skills that assume the Codex app ecosystem (Codex plugin namespaces or
+# Codex-only tooling). They are filtered out for other adapters.
+CODEX_ONLY_SKILLS = {
+    "browser:control-in-app-browser",
+    "github:yeet",
+    "github:gh-fix-ci",
+    "github:gh-address-comments",
+    "github:github",
+    "google-drive:google-drive",
+    "openai-docs",
+    "imagegen",
+    "playwright-interactive",
+}
+
+
+def recommended_skills_for(role: str, adapter: str) -> list[str]:
+    skills = RECOMMENDED_SKILLS[role]
+    if adapter == "codex":
+        return list(skills)
+    return [skill for skill in skills if skill not in CODEX_ONLY_SKILLS]
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
@@ -285,9 +311,9 @@ PROOF_GATED_GUIDANCE = {
 }
 
 
-def profile_for(role: str, include_project_harness: bool = False, workspace_dirname: str = DEFAULT_WORKSPACE_DIRNAME) -> str:
+def profile_for(role: str, include_project_harness: bool = False, workspace_dirname: str = DEFAULT_WORKSPACE_DIRNAME, adapter: str = DEFAULT_ADAPTER) -> str:
     name = ROLE_NAMES[role]
-    skills = "\n".join(f"- {skill}" for skill in RECOMMENDED_SKILLS[role])
+    skills = "\n".join(f"- {skill}" for skill in recommended_skills_for(role, adapter))
     refs = "\n".join(f"- {ref}" for ref in knowledge_refs_for(role, workspace_dirname))
     responsibilities = "\n".join(f"- {item}" for item in RESPONSIBILITIES[role])
     project_harness_section = ""
@@ -346,6 +372,38 @@ Return:
 - Report uncertainty and blockers to PM instead of guessing.
 - Use English for Agent-to-Agent body text unless project config says otherwise.
 """
+
+
+def claude_code_subagent_file(role: str, workspace_dirname: str) -> str:
+    name = ROLE_NAMES[role]
+    return dedent(
+        f"""\
+        ---
+        name: relayloop-{role}
+        description: RelayLoop {name}. Use when the PM dispatches a `RELAYLOOP_MESSAGE v1` message with `to_role: {role}`.
+        ---
+
+        # {name} (RelayLoop)
+
+        You are the {name} inside a RelayLoop project. The main session acts as the
+        PM Agent and dispatches work to you.
+
+        Before acting, read:
+
+        - `{workspace_dirname}/agent-profiles/{role}.md` (your role profile)
+        - `{workspace_dirname}/protocol.md` (the message protocol)
+
+        Operating rules:
+
+        - Respond only to `RELAYLOOP_MESSAGE v1` dispatches and respect `mode: task|goal|review`.
+        - Work against the dispatch's `Task:` and `Acceptance:` sections; produce the required evidence.
+        - Reply with the Return Format fields: Result (pass|fail|blocked when validating
+          or reviewing), Summary, Evidence, Files changed, Commands run, Risks/blockers,
+          and Next recommended action.
+        - Default workspace mode: `{WORKSPACE_MODES[role]}`.
+        - Do not install third-party skills or perform admin git actions; escalate to PM instead.
+        """
+    )
 
 
 def knowledge_file(title: str) -> str:
@@ -672,7 +730,7 @@ def project_harness_summary(enabled: bool, dry_run: bool, actions: list[dict], s
     }
 
 
-def agents_json(project_name: str, project_path: Path, project_id: str, roles: list[str], created_at: str, workspace_dirname: str = DEFAULT_WORKSPACE_DIRNAME) -> dict:
+def agents_json(project_name: str, project_path: Path, project_id: str, roles: list[str], created_at: str, workspace_dirname: str = DEFAULT_WORKSPACE_DIRNAME, adapter: str = DEFAULT_ADAPTER) -> dict:
     return {
         "schema": "relayloop.agents.v1",
         "project": {
@@ -680,6 +738,7 @@ def agents_json(project_name: str, project_path: Path, project_id: str, roles: l
             "projectPath": str(project_path),
             "projectId": project_id,
             "createdAt": created_at,
+            "adapter": adapter,
             "language": {
                 "protocol": "en",
                 "agentBody": "en",
@@ -694,24 +753,28 @@ def agents_json(project_name: str, project_path: Path, project_id: str, roles: l
                 "requireDylanForAdminActions": True,
             },
         },
-        "agents": [
-            {
-                "role": role,
-                "name": ROLE_NAMES[role],
-                "threadId": None,
-                "hostId": None,
-                "status": "planned",
-                "workspaceMode": WORKSPACE_MODES[role],
-                "profilePath": f"{workspace_dirname}/agent-profiles/{role}.md",
-                "recommendedSkills": RECOMMENDED_SKILLS[role],
-                "knowledgeRefs": knowledge_refs_for(role, workspace_dirname),
-                "responsibilities": RESPONSIBILITIES[role],
-                "skillReviewRequired": True,
-                "lastContactAt": None,
-            }
-            for role in roles
-        ],
+        "agents": [agent_entry(role, workspace_dirname, adapter) for role in roles],
     }
+
+
+def agent_entry(role: str, workspace_dirname: str, adapter: str) -> dict:
+    entry = {
+        "role": role,
+        "name": ROLE_NAMES[role],
+        "threadId": None,
+        "hostId": None,
+        "status": "planned",
+        "workspaceMode": WORKSPACE_MODES[role],
+        "profilePath": f"{workspace_dirname}/agent-profiles/{role}.md",
+        "recommendedSkills": recommended_skills_for(role, adapter),
+        "knowledgeRefs": knowledge_refs_for(role, workspace_dirname),
+        "responsibilities": RESPONSIBILITIES[role],
+        "skillReviewRequired": True,
+        "lastContactAt": None,
+    }
+    if adapter == "claude-code" and role != "pm":
+        entry["subagentPath"] = f".claude/agents/relayloop-{role}.md"
+    return entry
 
 
 def main() -> int:
@@ -720,6 +783,12 @@ def main() -> int:
     parser.add_argument("--project-path", required=True)
     parser.add_argument("--project-id")
     parser.add_argument("--project-type", default="software")
+    parser.add_argument(
+        "--adapter",
+        choices=ADAPTERS,
+        default=DEFAULT_ADAPTER,
+        help="Target platform adapter. 'claude-code' also generates .claude/agents/ subagent definitions.",
+    )
     parser.add_argument("--roles", help="Comma-separated roles. Defaults to PM,Dev,Test,Version,Review,Research,UX.")
     parser.add_argument("--include-fw", action="store_true", help="Include FW Agent.")
     parser.add_argument("--include-ml", action="store_true", help="Include ML Agent.")
@@ -759,7 +828,14 @@ def main() -> int:
             directory.mkdir(parents=True, exist_ok=True)
 
     for role in ROLES:
-        write_text(workspace_dir / "agent-profiles" / f"{role}.md", profile_for(role, include_project_harness, workspace_dirname), args.force, args.dry_run, actions)
+        write_text(workspace_dir / "agent-profiles" / f"{role}.md", profile_for(role, include_project_harness, workspace_dirname, args.adapter), args.force, args.dry_run, actions)
+
+    if args.adapter == "claude-code":
+        subagents_dir = project_path / ".claude" / "agents"
+        for role in roles:
+            if role == "pm":
+                continue
+            write_text(subagents_dir / f"relayloop-{role}.md", claude_code_subagent_file(role, workspace_dirname), args.force, args.dry_run, actions)
 
     knowledge = {
         "architecture.md": "Architecture",
@@ -776,13 +852,16 @@ def main() -> int:
         touch(workspace_dir / log_name, args.dry_run, actions)
 
     project_id = args.project_id or str(project_path)
-    write_text(workspace_dir / "agents.json", json.dumps(agents_json(args.project_name, project_path, project_id, roles, created_at, workspace_dirname), indent=2) + "\n", args.force, args.dry_run, actions)
+    write_text(workspace_dir / "agents.json", json.dumps(agents_json(args.project_name, project_path, project_id, roles, created_at, workspace_dirname, args.adapter), indent=2) + "\n", args.force, args.dry_run, actions)
     write_text(workspace_dir / "progress.md", progress_file(args.project_name, roles, include_project_harness), args.force, args.dry_run, actions)
     write_text(workspace_dir / "protocol.md", protocol_file(), args.force, args.dry_run, actions)
 
     project_harness_actions = write_project_harness(project_path, args.project_name, args.force, args.dry_run) if include_project_harness else []
     project_harness_suggested = (not include_project_harness) and args.project_type.lower() in APP_TYPES
-    next_action = "PM should create/register Agent threads after Dylan approval and update agents.json."
+    if args.adapter == "claude-code":
+        next_action = "PM runs in the main Claude Code session; after Dylan approval, dispatch RELAYLOOP_MESSAGE v1 tasks to the generated relayloop-* subagents."
+    else:
+        next_action = "PM should create/register Agent threads after Dylan approval and update agents.json."
     if include_project_harness:
         next_action = "Run grill-me discovery Q&A with Dylan, then fill AGENTS.md and specs/ before implementation."
     elif project_harness_suggested:
@@ -796,6 +875,7 @@ def main() -> int:
                 "relayLoopDir": str(workspace_dir),
                 "workspaceDirname": workspace_dirname,
                 "legacyLayout": workspace_dirname == LEGACY_WORKSPACE_DIRNAME,
+                "adapter": args.adapter,
                 "roles": roles,
                 "dryRun": args.dry_run,
                 "actions": actions,

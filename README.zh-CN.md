@@ -8,7 +8,7 @@ RelayLoop 把一个目标转成可派发任务、可追踪项目状态、可验�
 
 <br>
 
-<a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
+<a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex_·_Claude_Code-111827?style=for-the-badge" alt="Codex and Claude Code platforms"></a>
 <img src="https://img.shields.io/badge/status-Codex_first-2563eb?style=for-the-badge" alt="Codex first">
 <img src="https://img.shields.io/badge/protocol-RELAYLOOP__MESSAGE_v1-059669?style=for-the-badge" alt="RELAYLOOP_MESSAGE v1">
 <img src="https://img.shields.io/badge/workflow-PM_orchestrated-7c3aed?style=for-the-badge" alt="PM orchestrated">
@@ -65,6 +65,22 @@ python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
 ```
 
 这会创建项目本地的 RelayLoop 工作区（`relay-loop/`），用于 Agent roster、消息日志、决策日志、提交日志、角色 profile 和 `progress.md`。
+
+### Claude Code
+
+同一个 skill 也可以在 Claude Code 下运行——安装到 `~/.claude/skills/`,初始化时加 `--adapter claude-code`:
+
+```bash
+mkdir -p ~/.claude/skills/relayloop
+rsync -a "$tmp"/ ~/.claude/skills/relayloop/
+
+python3 ~/.claude/skills/relayloop/scripts/init_relay_loop.py \
+  --project-name "ExampleProject" \
+  --project-path /path/to/project \
+  --adapter claude-code
+```
+
+`--adapter claude-code` 会额外生成 `.claude/agents/relayloop-<role>.md` 子代理定义:主会话充当 PM Agent,向角色子代理派发 `RELAYLOOP_MESSAGE v1` 任务。协议、工作区和审计日志在两个平台完全一致。详见 [references/adapters/claude-code.md](./references/adapters/claude-code.md)。
 
 > [!NOTE]
 > **从旧版 `team-loop/` 迁移？** 早期版本的工作区目录叫 `team-loop/`。初始化脚本会自动检测并复用已有的 `team-loop/` 工作区，不会重复创建；CLI 也保留 `--team-loop-dir` 作为 `--relay-loop-dir` 的兼容别名。新项目一律创建 `relay-loop/`。
@@ -138,10 +154,9 @@ RELAYLOOP_MESSAGE v1
 
 ## 🧩 当前支持
 
-- Codex skill：当前支持
-- Codex threads：作为角色 Agent
-- Codex worktrees：项目已有有效 `HEAD` 后可用于隔离 Dev/Test
-- Claude Code / Hermes：预留未来适配
+- Codex skill：✅ 当前支持（主要目标平台;threads 作为角色 Agent,worktrees 隔离 Dev/Test）
+- Claude Code：✅ 当前支持（主会话为 PM,`relayloop-*` 子代理为角色;详见 [适配文档](./references/adapters/claude-code.md)）
+- Hermes：🔜 预留未来适配
 
 ## 🗂 统一命名
 

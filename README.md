@@ -2,14 +2,14 @@
 
 # RelayLoop
 
-**PM-led engineering loops for Codex agent teams**
+**PM-led engineering loops for Codex & Claude Code agent teams**
 
 RelayLoop is the relay layer that turns one objective into dispatched Agent work,<br>
 durable project state, review/test loops, and git readiness.
 
 <br>
 
-<a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex-111827?style=for-the-badge" alt="Codex platform"></a>
+<a href="https://github.com/DylanZhangzzz/RelayLoop"><img src="https://img.shields.io/badge/platform-Codex_·_Claude_Code-111827?style=for-the-badge" alt="Codex and Claude Code platforms"></a>
 <img src="https://img.shields.io/badge/status-Codex_first-2563eb?style=for-the-badge" alt="Codex first">
 <img src="https://img.shields.io/badge/protocol-RELAYLOOP__MESSAGE_v1-059669?style=for-the-badge" alt="RELAYLOOP_MESSAGE v1">
 <img src="https://img.shields.io/badge/workflow-PM_orchestrated-7c3aed?style=for-the-badge" alt="PM orchestrated">
@@ -37,7 +37,7 @@ English | [简体中文](./README.zh-CN.md)
 
 ## 🚀 What Is RelayLoop?
 
-RelayLoop is a **Codex-first, PM-led relay layer for engineering agent teams**.
+RelayLoop is a **Codex-first, PM-led relay layer for engineering agent teams**, with a supported Claude Code adapter.
 
 It is not a generic agent framework and not an agent group chat. It is a lightweight, repo-local operating system for Codex Desktop and Codex threads: the User gives the PM Agent an objective; PM routes structured work to role Agents; the PM Agent maintains the RelayLoop progress file (`relay-loop/progress.md`) as the active single source of truth; Agents return results with evidence; audit logs land in the repo; and the loop stops whenever User approval is required.
 
@@ -97,6 +97,22 @@ python3 ~/.codex/skills/relayloop/scripts/init_relay_loop.py \
 ```
 
 This creates the project-local RelayLoop workspace (`relay-loop/`) used by the PM Agent, role Agents, progress file, and audit logs.
+
+### Claude Code
+
+The same skill runs under Claude Code — install it to `~/.claude/skills/` and initialize with the Claude Code adapter:
+
+```bash
+mkdir -p ~/.claude/skills/relayloop
+rsync -a "$tmp"/ ~/.claude/skills/relayloop/
+
+python3 ~/.claude/skills/relayloop/scripts/init_relay_loop.py \
+  --project-name "ExampleProject" \
+  --project-path /path/to/project \
+  --adapter claude-code
+```
+
+`--adapter claude-code` additionally generates `.claude/agents/relayloop-<role>.md` subagent definitions: the main Claude Code session acts as the PM Agent and dispatches `RELAYLOOP_MESSAGE v1` tasks to the role subagents. The protocol, workspace, and audit logs are identical across both platforms. See [references/adapters/claude-code.md](./references/adapters/claude-code.md) for the concept mapping and the agent-teams / multi-session modes.
 
 ### Optional Specialist Import CLI
 
@@ -421,23 +437,30 @@ Version Agent may create branches, commits, and changelog/version edits only aft
 
 A push is distinct from a merge or release: safe committed-change pushes are Version Agent judgment calls after readiness checks, while branch deletion, branch merge, public history rewrites, formal releases, and third-party skill installs require User confirmation.
 
-## 🧩 Codex Support Today
+## 🧩 Platform Support
 
-RelayLoop is Codex-first today:
+The RelayLoop core — protocol envelope, `relay-loop/` workspace, audit logs, and scripts — is plain text and platform-independent. Platform-specific behavior lives in adapters:
+
+**Codex (primary):**
 
 - Codex skills live under `~/.codex/skills/`.
 - Codex threads act as role Agents.
 - Codex worktrees can isolate Dev/Test once the project has a valid `HEAD`.
 - Codex thread tools can send and read Agent messages.
 
-The method is designed to be portable, but only Codex support is documented as ready in this repository.
+**Claude Code (supported):**
 
-### Future Adapters
+- Claude Code skills live under `~/.claude/skills/` (or project `.claude/skills/`).
+- The main session acts as the PM Agent; role Agents run as generated `relayloop-*` subagents (default), agent teams (experimental), or independent sessions.
+- Claude Code worktree isolation covers Dev/Test, with the same `check_worktree_ready.py` preflight.
+- Full mapping: [references/adapters/claude-code.md](./references/adapters/claude-code.md).
+
+### Adapters
 
 | Adapter | Status | Notes |
 |---|---|---|
 | Codex | ✅ supported now | Primary target for this skill |
-| Claude Code | 🔜 reserved | Feasible if role threads, skills, and message routing are mapped cleanly |
+| Claude Code | ✅ supported now | Subagent mode by default; agent-teams and multi-session modes documented |
 | Hermes | 🔜 reserved | Feasibility depends on available Agent, state, and dispatch primitives |
 
 ## 🗺 Recommended First Run
@@ -485,6 +508,8 @@ The initializer creates the RelayLoop workspace at `relay-loop/`. That directory
     project-files.md
     specialist-adapters.md
     agent-skill-recommendations.md
+    adapters/
+      claude-code.md
   scripts/
     init_relay_loop.py
     check_worktree_ready.py
